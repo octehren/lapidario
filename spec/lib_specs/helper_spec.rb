@@ -12,9 +12,15 @@ RSpec.describe Lapidario::Helper do
     it "returns true for valid version fragments" do
       expect(Lapidario::Helper.version_fragment?('~> 1.2')).to be(true)
       expect(Lapidario::Helper.version_fragment?('>= 10.2.1')).to be(true)
+      expect(Lapidario::Helper.version_fragment?('<= 10.2.1')).to be(true)
       expect(Lapidario::Helper.version_fragment?('1.2')).to be(true)
-      expect(Lapidario::Helper.version_fragment?('== 1.2.alpha')).to be(true)
-      expect(Lapidario::Helper.version_fragment?('= 2.0.beta3')).to be(true)
+      expect(Lapidario::Helper.version_fragment?('>1.2')).to be(true) # no whitespace between version and sign
+      expect(Lapidario::Helper.version_fragment?('< 1.2')).to be(true)
+      expect(Lapidario::Helper.version_fragment?('> 1.2')).to be(true)
+      expect(Lapidario::Helper.version_fragment?('1.2.alpha')).to be(true)
+      expect(Lapidario::Helper.version_fragment?('2.0.beta3')).to be(true)
+      expect(Lapidario::Helper.version_fragment?('= 2.0.beta3')).to be(false)
+      expect(Lapidario::Helper.version_fragment?('== 1.1')).to be(false)
     end
 
     it "returns false for invalid version fragments" do

@@ -4,9 +4,8 @@ require "fileutils"
 
 module Lapidario
   module Helper
-    # regex to match the version fragment in a Gemfile, such as '~> 0.21', '1.2', '>= 10.2.1', '== 1.2alpha' etc
-    @@GEM_VERSION_FRAGMENT = /^[0-9\s.~><=]+$|^((~>|>=|<=|=)([0-9a-zA-Z\s.]*))+$|^([0-9a-zA-Z\s.]*)(<|>)([0-9a-zA-Z\s.]*)+$/
-
+    # regex to match the version fragment in a Gemfile, such as '~> 0.21', '1.2', '>= 10.2.1', '1.2alpha' etc; 
+    @@GEM_VERSION_FRAGMENT = /^\s*([<>]=?|~>)?\s*[0-9a-zA-Z\s.]+\s*$/
     # GemfileInfo helpers
 
     def self.version_fragment?(line_section)

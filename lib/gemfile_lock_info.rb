@@ -6,7 +6,7 @@ module Lapidario
   class GemfileLockInfo
     def initialize(gemfile_lock_as_strings)
       @git_gems = []
-      @rubygems_gems = Helper.get_rubygems_from_gemfile_lock(gemfile_lock_as_strings)
+      @rubygems_gems = Lapidario::Helper.get_rubygems_from_gemfile_lock(gemfile_lock_as_strings)
       print @rubygems_gems
     end
 
