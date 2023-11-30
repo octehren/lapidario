@@ -30,15 +30,17 @@ module Lapidario
         gem_section = Helper.slice_up_to_next_empty_line(index, gemfile_lock_as_strings) if line == "GEM"
       end
 
-      raise "#{gemfile_lock_as_strings.join("\n")}\n\nEND OF OUTPUT\nA line consisting of a single 'GEM' string with no further chars wasn't found. See output above." if gem_section.empty?
+      if gem_section.empty?
+        raise "#{gemfile_lock_as_strings.join("\n")}\n\nEND OF OUTPUT\nA line consisting of a single 'GEM' string with no further chars wasn't found. See output above."
+      end
 
       gem_section.each do |line|
-        if Lapidario::Helper.lockfile_primary_gem_line? line
-          gem_name_and_version = line.clone.strip.split(" ")
-          name = gem_name_and_version[0]
-          version = gem_name_and_version[1]
-          gem_names_and_versions[name] = version ? version.gsub(/[()]/, '') : ""
-        end
+        next unless Lapidario::Helper.lockfile_primary_gem_line? line
+
+        gem_name_and_version = line.clone.strip.split(" ")
+        name = gem_name_and_version[0]
+        version = gem_name_and_version[1]
+        gem_names_and_versions[name] = version ? version.gsub(/[()]/, "") : ""
       end
       gem_names_and_versions
     end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative "helper"
 
 module Lapidario
@@ -16,19 +17,19 @@ module Lapidario
 
     def self.get_version_field(gemfile_line_items)
       version_number_and_sign = gemfile_line_items
-        .map { |item| item.gsub('"','').gsub("'", "").gsub(" ", "") } # can be something like [" '~> 6.3'"]
-        .find { |item| Lapidario::Helper.version_fragment? item }
+                                .map { |item| item.gsub('"', "").gsub("'", "").gsub(" ", "") } # can be something like [" '~> 6.3'"]
+                                .find { |item| Lapidario::Helper.version_fragment? item }
       return ["", ""] unless version_number_and_sign
-      version_number = version_number_and_sign.gsub(/(~>|>=|<=|>|<)/, '')
-      version_sign = version_number_and_sign.gsub(/[^~>=<]/, '')
+
+      version_number = version_number_and_sign.gsub(/(~>|>=|<=|>|<)/, "")
+      version_sign = version_number_and_sign.gsub(/[^~>=<]/, "")
       [version_number, version_sign]
     end
-
 
     def self.gem_info(gemfile_line, line_index = -9999)
       gem_info = { line_index: line_index, name: "", current_version: "", version_sign: "", extra_info: "" }
       gemfile_line_items = gemfile_line.split(",")
-       # first element will always be gem name, so return and remove it with shift
+      # first element will always be gem name, so return and remove it with shift
       gem_info[:name] = Lapidario::GemfileInfo.get_gem_name gemfile_line_items.shift
       version_number_and_sign = Lapidario::GemfileInfo.get_version_field(gemfile_line_items)
       gem_info[:current_version] = version_number_and_sign[0]
@@ -47,8 +48,6 @@ module Lapidario
       gemfile_lines
     end
 
-    def construct_gemfile_line
-
-    end
+    def construct_gemfile_line; end
   end
 end
