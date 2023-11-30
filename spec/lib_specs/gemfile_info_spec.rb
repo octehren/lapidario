@@ -1,5 +1,4 @@
 # spec/lapidario/gemfile_info_spec.rb
-require "pry"
 
 require_relative "../spec_helper"
 
