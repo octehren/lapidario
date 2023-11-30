@@ -11,7 +11,7 @@ RSpec.describe Lapidario::LockfileInfo do
 
     describe '#initialize' do
       it 'initializes with Rubygems gems and empty git gems' do
-        expect(lockfile_info.instance_variable_get(:@rubygems_gems)).to eq('rails' => '5.2.3', 'rspec' => '3.10.0')
+        expect(lockfile_info.instance_variable_get(:@rubygems_gems)).to eq({"ast"=>"2.4.2", "coderay"=>"1.1.3", "diff-lcs"=>"1.5.0", "json"=>"2.6.3", "language_server-protocol"=>"3.17.0.3", "rubocop-ast"=>"1.30.0", "ruby-progressbar"=>"1.13.0", "unicode-display_width"=>"2.5.0"})
         expect(lockfile_info.instance_variable_get(:@git_gems)).to eq([])
       end
     end
@@ -24,11 +24,11 @@ RSpec.describe Lapidario::LockfileInfo do
       end
 
       it 'puts versionless Rubygems information for gems without versions' do
-        gemfile_lock_as_strings << "  gem 'shoulda-matchers'"
-        lockfile_info_with_nil_versions = described_class.new(gemfile_lock_as_strings)
+        lockfile_as_array_of_strings << "    shoulda-matchers"
+        lockfile_info_with_nil_versions = described_class.new(lockfile_as_array_of_strings)
 
         expect { lockfile_info_with_nil_versions.puts_versionless_rubygems_info }.to output(
-          /shoulda-matchers.*nil.*There are 1 gems without specified version/
+          /shoulda-matchers.*nil.*shoulda-matchers\nThere are 1 gems without specified version/
         ).to_stdout
       end
     end
@@ -51,7 +51,7 @@ RSpec.describe Lapidario::LockfileInfo do
 
         result = described_class.get_rubygems_from_gemfile_lock(gemfile_lock_as_strings)
 
-        expect(result).to eq('ast' => '2.4.2', 'rubocop' => '3.12.0', 'rspec' => '3.12.0',)
+        expect(result).to eq('ast' => '2.4.2', 'rubocop' => '1.57.2', 'rspec' => '3.12.0',)
       end
     end
 
