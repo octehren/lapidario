@@ -2,7 +2,7 @@
 
 require_relative "lapidario/version"
 require_relative "helper"
-require_relative "gemfile_lock_info"
+require_relative "lockfile_info"
 require_relative "gemfile_info"
 module Lapidario
   class Error < StandardError; end

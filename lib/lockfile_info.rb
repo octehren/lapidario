@@ -3,7 +3,7 @@
 require_relative "helper"
 
 module Lapidario
-  class GemfileLockInfo
+  class LockfileInfo
     def initialize(gemfile_lock_as_strings)
       @git_gems = []
       @rubygems_gems = Lapidario::Helper.get_rubygems_from_gemfile_lock(gemfile_lock_as_strings)
