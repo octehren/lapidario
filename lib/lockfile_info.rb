@@ -6,7 +6,7 @@ module Lapidario
   class LockfileInfo
     def initialize(gemfile_lock_as_strings)
       @git_gems = []
-      @rubygems_gems = Lapidario::Helper.get_rubygems_from_gemfile_lock(gemfile_lock_as_strings)
+      @rubygems_gems = Lapidario::LockfileInfo.get_rubygems_from_gemfile_lock(gemfile_lock_as_strings)
       print @rubygems_gems
     end
 
@@ -34,7 +34,7 @@ module Lapidario
       raise "#{gemfile_lock_as_strings.join("\n")}\n\nEND OF OUTPUT\nA line consisting of a single 'GEM' string with no further chars wasn't found. See output above." if gem_section.empty?
 
       gem_section.each do |line|
-        if Helper.is_primary_gem_line? line
+        if Lapidario::Helper.lockfile_primary_gem_line? line
           gem_name_and_version = line.clone.strip.split(" ")
           gem_names_and_versions[gem_name_and_version[0]] = gem_name_and_version[1]
         end
