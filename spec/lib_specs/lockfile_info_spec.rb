@@ -1,11 +1,13 @@
 # lockfile_info_spec.rb
 
 require_relative "../spec_helper"
+
 SIMPLE_LOCKFILE_PATH = "lapidario_v01"
+
 RSpec.describe Lapidario::LockfileInfo do
   describe "using simple lockfile" do
-    let(:lockfile_as_array_of_strings) { get_lockfile_path(SIMPLE_LOCKFILE_PATH) }
-    let(:lockfile_info) { described_class.new(lockfile_as_strings) }
+    let(:lockfile_as_array_of_strings) { Lapidario::Helper.get_file_as_array_of_lines(get_lockfile_path(SIMPLE_LOCKFILE_PATH)) }
+    let(:lockfile_info) { described_class.new(lockfile_as_array_of_strings) }
 
     describe '#initialize' do
       it 'initializes with Rubygems gems and empty git gems' do
@@ -41,15 +43,15 @@ RSpec.describe Lapidario::LockfileInfo do
       it 'returns a hash of rubygems gems' do
         gemfile_lock_as_strings = [
           "GEM",
-          "  gem 'rails', '5.2.3'",
-          "  gem 'rspec', '3.10.0'",
-          "  gem 'shoulda-matchers'",
+          "    ast (2.4.2)",
+          "    rubocop (1.57.2)",
+          "    rspec (3.12.0)",
           ""
         ]
 
         result = described_class.get_rubygems_from_gemfile_lock(gemfile_lock_as_strings)
 
-        expect(result).to eq('rails' => '5.2.3', 'rspec' => '3.10.0', 'shoulda-matchers' => nil)
+        expect(result).to eq('ast' => '2.4.2', 'rubocop' => '3.12.0', 'rspec' => '3.12.0',)
       end
     end
 
