@@ -22,5 +22,21 @@ module Lapidario
     def git_gems?
       puts "TODO"
     end
+
+    # gets gems installed from rubygems; in the future check also for other remote sources
+    def self.get_rubygems_from_gemfile_lock(gemfile_lock_as_strings)
+      gem_section = []
+      gem_names_and_versions = {}
+      gemfile_lock_as_strings.each_with_index do |line, index|
+        gem_section = Helper.slice_up_to_next_empty_line(index, gemfile_lock_as_strings) if line == "GEM"
+      end
+      gem_section.each do |line|
+        if Helper.is_primary_gem_line? line
+          gem_name_and_version = line.clone.strip.split(" ")
+          gem_names_and_versions[gem_name_and_version[0]] = gem_name_and_version[1]
+        end
+      end
+      gem_names_and_versions
+    end
   end
 end
