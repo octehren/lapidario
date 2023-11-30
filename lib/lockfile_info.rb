@@ -30,6 +30,9 @@ module Lapidario
       gemfile_lock_as_strings.each_with_index do |line, index|
         gem_section = Helper.slice_up_to_next_empty_line(index, gemfile_lock_as_strings) if line == "GEM"
       end
+
+      raise "#{gemfile_lock_as_strings.join("\n")}\n\nEND OF OUTPUT\nA line consisting of a single 'GEM' string with no further chars wasn't found. See output above." if gem_section.empty?
+
       gem_section.each do |line|
         if Helper.is_primary_gem_line? line
           gem_name_and_version = line.clone.strip.split(" ")
