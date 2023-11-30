@@ -15,8 +15,7 @@ module Lapidario
       @rubygems_gems.each do |gem, version|
         versionless_gems << [gem, version] if version.nil? || version.empty?
       end
-      puts versionless_gems
-      puts "There are #{versionless_gems.size} gems without specified version, names are listed above."
+      print "#{versionless_gems.join("\n")}\nThere are #{versionless_gems.size} gems without specified version, names are listed above."
     end
 
     def git_gems?
@@ -36,7 +35,9 @@ module Lapidario
       gem_section.each do |line|
         if Lapidario::Helper.lockfile_primary_gem_line? line
           gem_name_and_version = line.clone.strip.split(" ")
-          gem_names_and_versions[gem_name_and_version[0]] = gem_name_and_version[1]
+          name = gem_name_and_version[0]
+          version = gem_name_and_version[1]
+          gem_names_and_versions[name] = version ? version.gsub(/[()]/, '') : ""
         end
       end
       gem_names_and_versions
