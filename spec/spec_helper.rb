@@ -1,8 +1,10 @@
 # frozen_string_literal: true
-
 require "lapidario"
 
-GEM_AND_LOCKFILE_NAMES = ["mastodon"]
+# debugger available everywhere in tests
+require "pry"
+
+GEM_AND_LOCKFILE_NAMES = ["mastodon", "lapidario_v01"]
 
 def get_gemfile_path(gemfile_name)
   File.join(__dir__, "fixtures/gemfile_samples", "Gemfile.#{gemfile_name}")
