@@ -11,4 +11,8 @@ module Lapidario
     gemfile_lock = Helper.get_file_as_array_of_lines(gemfile_lock_path)
     GemfileLockInfo.new(gemfile_lock)
   end
+
+  def self.hardcode_lockfile_versions_into_gemfile
+    puts "TODO"
+  end
 end
