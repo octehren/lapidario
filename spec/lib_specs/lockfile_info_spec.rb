@@ -17,19 +17,18 @@ RSpec.describe Lapidario::LockfileInfo do
     end
 
     describe '#puts_versionless_rubygems_info' do
-      it 'puts versionless Rubygems information' do
+      it 'puts versionless Rubygems information when there are 0 versionless gems' do
         expect { lockfile_info.puts_versionless_rubygems_info }.to output(
-          /rails.*5.2.3.*rspec.*3.10.0.*There are 0 gems without specified version/
+          /There are 0 gems without specified version/
         ).to_stdout
       end
 
       it 'puts versionless Rubygems information for gems without versions' do
         lockfile_as_array_of_strings << "    shoulda-matchers"
+        lockfile_as_array_of_strings << "    ruby-progressbar"
         lockfile_info_with_nil_versions = described_class.new(lockfile_as_array_of_strings)
 
-        expect { lockfile_info_with_nil_versions.puts_versionless_rubygems_info }.to output(
-          /shoulda-matchers.*nil.*shoulda-matchers\nThere are 1 gems without specified version/
-        ).to_stdout
+        expect { lockfile_info_with_nil_versions.puts_versionless_rubygems_info }.to output("ruby-progressbar\n\nshoulda-matchers\n\nThere are 2 gems without specified version, names are listed above.").to_stdout
       end
     end
 
