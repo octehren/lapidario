@@ -3,11 +3,11 @@
 require_relative "../spec_helper"
 
 RSpec.describe Lapidario::GemfileInfo do
-  let(:gemfile_as_strings) { -> { Lapidario::Helper.get_file_as_array_of_lines(get_random_gemfile_path) }.call }
+  let(:gemfile_as_array_of_strings) { -> { get_random_gemfile }.call }
 
   describe "#initialize" do
     it "creates GemfileInfo object with correct gemfile lines" do
-      gemfile_info = described_class.new(gemfile_as_strings)
+      gemfile_info = described_class.new(gemfile_as_array_of_strings)
       expect(gemfile_info.instance_variable_get(:@gemfile_lines)).to be_an(Array)
     end
   end

@@ -4,7 +4,7 @@ require_relative "../spec_helper"
 SIMPLE_LOCKFILE_PATH = "lapidario_v01"
 RSpec.describe Lapidario::LockfileInfo do
   describe "using simple lockfile" do
-    let(:lockfile_as_strings) { ["GEM", "    gem 'rails', '5.2.3'", "    gem 'rspec', '3.10.0'", ""] }
+    let(:lockfile_as_array_of_strings) { get_lockfile_path(SIMPLE_LOCKFILE_PATH) }
     let(:lockfile_info) { described_class.new(lockfile_as_strings) }
 
     describe '#initialize' do
