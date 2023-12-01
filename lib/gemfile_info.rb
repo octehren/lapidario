@@ -48,6 +48,8 @@ module Lapidario
       gemfile_lines
     end
 
-    def construct_gemfile_line; end
+    def self.build_gemfile_line(gi) # gi = gem_info
+      "gem '#{gi[:name]}', '#{gi[:version_sign]} #{gi[:current_version]}', #{gi[:extra_info].split(",").join(", ").gsub(/\s+/, ' ').strip}"
+    end
   end
 end
