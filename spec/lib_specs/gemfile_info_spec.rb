@@ -27,6 +27,14 @@ RSpec.describe Lapidario::GemfileInfo do
         expect(gem_info[:version_sign]).to eq('~>')
       end
 
+      it "returns a hash with gem information when there are prepended whitespaces" do
+        gemfile_line = "  gem 'rails', '~> 6.0'"
+        gem_info = described_class.gem_info(gemfile_line)
+        expect(gem_info[:name]).to eq('rails')
+        expect(gem_info[:current_version]).to eq('6.0')
+        expect(gem_info[:version_sign]).to eq('~>')
+      end
+
       it "returns a hash with gem information while detecting extra info" do
         gemfile_line = "gem 'rails', '~> 6.0', require: false, github: 'https://github.com/rails/rails'"
         gem_info = described_class.gem_info(gemfile_line)

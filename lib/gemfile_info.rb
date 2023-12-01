@@ -7,7 +7,7 @@ module Lapidario
     def initialize(gemfile_as_strings)
       @original_gemfile = gemfile_as_strings
       # array of hashes:
-      # { line_number: int; name: string;
+      # { line_number: int; name: string; prepended_spaces: int;
       # current_version: string; version_sign: string; extra_info: string}
       @gemfile_lines = Lapidario::GemfileInfo.extract_gemfile_lines_info(gemfile_as_strings)
     end
@@ -40,8 +40,11 @@ module Lapidario
     end
 
     def self.gem_info(gemfile_line, line_index = -9999)
-      gem_info = { line_index: line_index, name: "", current_version: "", version_sign: "", extra_info: "" }
-      gemfile_line_items = gemfile_line.split(",")
+      gem_info = { line_index: line_index, name: "", prepended_spaces: 0, current_version: "", version_sign: "", extra_info: "" }
+      # count prepended spaces to reuse on gemfile rebuild
+      gem_info[:prepended_spaces] = gemfile_line.match(/\A\s*/)[0].size
+      # splits on coma, removes prepended whitespaces if any
+      gemfile_line_items = gemfile_line.sub(/\A\s*/, '').split(",")
       # first element will always be gem name, so return and remove it with shift
       gem_info[:name] = Lapidario::GemfileInfo.get_gem_name gemfile_line_items.shift
       # second might not be the version number, so find the version, store it separetly and remove it from the rest of the line
@@ -69,7 +72,7 @@ module Lapidario
 
     # gi = gem_info
     def self.build_gemfile_line(gi)
-      "gem '#{gi[:name]}', '#{gi[:version_sign]} #{gi[:current_version]}', #{gi[:extra_info]}"
+      "#{' ' * gi[:prepended_spaces]}gem '#{gi[:name]}', '#{gi[:version_sign]} #{gi[:current_version]}', #{gi[:extra_info]}"
     end
   end
 end
