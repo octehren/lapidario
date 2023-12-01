@@ -17,9 +17,8 @@ module Lapidario
       gemfile_line.start_with? "gem "
     end
 
-    # valid paths could be something like ./project/, ./project, ./project/Gemfile, ./project/Gemfile.lock
     def self.format_path(filepath, for_lockfile = false)
-      # path can be ./project/ or ./project/Gemfile, but never ./project/Gemfile/
+      # path can be ./project/, ./project or ./project/Gemfile, but never ./project/Gemfile/
       appendage = ""
       appendage = "/" unless (filepath =~ /\/$/ or filepath =~ @@DETECT_GEMFILE_IN_PATH) # checks if path finishes on '/' or if it contains Gemfile (also valid for lockfile)
       unless for_lockfile
@@ -30,8 +29,6 @@ module Lapidario
       filepath + appendage
     end
 
-    # GemfileLockInfo helpers
-
     def self.get_file_as_array_of_lines(filepath)
       begin
         File.read(filepath).split("\n")
@@ -40,16 +37,13 @@ module Lapidario
       end
     end
 
+    # Lockfile-focused helpers
     def self.slice_up_to_next_empty_line(initial_index, lines_array)
       final_index = -1
       (initial_index...lines_array.size).each do |i|
         final_index = i if lines_array[i].empty?
       end
       lines_array.slice(initial_index, final_index)
-    end
-
-    def self.get_git_gems_from_gemfile_lock(_gemfile_lock_as_strings)
-      puts "TODO"
     end
 
     # a primary gem line will always begin with 4 whitespaces.
