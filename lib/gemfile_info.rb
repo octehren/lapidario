@@ -21,19 +21,19 @@ module Lapidario
       version_number_and_sign = []
       gemfile_line_items
         .map { |item| item.gsub('"', "").gsub("'", "").gsub(" ", "") } # can be something like [" '~> 6.3'"]
-        .each_with_index do |item, index| 
-          if Lapidario::Helper.version_fragment? item
-            version_number_and_sign = item
-            version_index = index
-            break # will break at first index, so if there is an upper range index later this won't affect results
-          end
+        .each_with_index do |item, index|
+          next unless Lapidario::Helper.version_fragment? item
+
+          version_number_and_sign = item
+          version_index = index
+          break # will break at first index, so if there is an upper range index later this won't affect results
         end
 
       return [] if version_number_and_sign.empty?
-      
+
       version_number = version_number_and_sign.gsub(/(~>|>=|<=|>|<)/, "")
       version_sign = version_number_and_sign.gsub(/[^~>=<]/, "")
-      
+
       gemfile_line_items.delete_at(version_index)
       [version_number, version_sign]
     end
@@ -50,9 +50,11 @@ module Lapidario
       gem_info[:version_sign] = version_number_and_sign[1].to_s
       # in case version is ranged, run pop_version_field! again, just removing the field and appending it to the beginning of extra info, immediately after lower range.
       version_upper_range = Lapidario::GemfileInfo.pop_version_field!(gemfile_line_items)
-      gemfile_line_items.unshift("'#{version_upper_range[1]} #{version_upper_range[0]}'") unless version_upper_range.empty?
+      unless version_upper_range.empty?
+        gemfile_line_items.unshift("'#{version_upper_range[1]} #{version_upper_range[0]}'")
+      end
       # all that's left is extra_info
-      gem_info[:extra_info] = gemfile_line_items.compact.join(", ").split(",").join(", ").gsub(/\s+/, ' ').strip
+      gem_info[:extra_info] = gemfile_line_items.compact.join(", ").split(",").join(", ").gsub(/\s+/, " ").strip
       gem_info
     end
 
@@ -64,7 +66,8 @@ module Lapidario
       gemfile_lines
     end
 
-    def self.build_gemfile_line(gi) # gi = gem_info
+    # gi = gem_info
+    def self.build_gemfile_line(gi)
       "gem '#{gi[:name]}', '#{gi[:version_sign]} #{gi[:current_version]}', #{gi[:extra_info]}"
     end
   end
