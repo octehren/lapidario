@@ -72,4 +72,61 @@ RSpec.describe Lapidario::Helper do
       expect(Lapidario::Helper.lockfile_primary_gem_line?('ast (~> 2.4.1)')).to be(false)
     end
   end
+
+  describe '.format_path' do
+    context 'when formatting a regular file path' do
+      it 'returns the path with Gemfile appended' do
+        filepath = './project/'
+        result = Lapidario::Helper.format_path(filepath)
+        expect(result).to eq('./project/Gemfile')
+      end
+
+      it 'returns the path with Gemfile.lock appended' do
+        filepath = './project/'
+        result = Lapidario::Helper.format_path(filepath, true)
+        expect(result).to eq('./project/Gemfile.lock')
+      end
+
+      it 'returns the original path if it already has Gemfile appended' do
+        filepath = './project/Gemfile'
+        result = Lapidario::Helper.format_path(filepath)
+        expect(result).to eq('./project/Gemfile')
+      end
+
+      it 'returns the original path if it already has Gemfile.lock appended' do
+        filepath = './project/Gemfile.lock'
+        result = Lapidario::Helper.format_path(filepath, true)
+        expect(result).to eq('./project/Gemfile.lock')
+      end
+    end
+
+    context 'when formatting a path ending with "/"' do
+      it 'appends Gemfile' do
+        filepath = './project/'
+        result = Lapidario::Helper.format_path(filepath)
+        expect(result).to eq('./project/Gemfile')
+      end
+
+      it 'appends Gemfile.lock' do
+        filepath = './project/'
+        result = Lapidario::Helper.format_path(filepath, true)
+        expect(result).to eq('./project/Gemfile.lock')
+      end
+    end
+
+    context 'when formatting a path without a trailing slash' do
+      it 'appends Gemfile' do
+        filepath = './project'
+        result = Lapidario::Helper.format_path(filepath)
+        expect(result).to eq('./project/Gemfile')
+      end
+
+      it 'appends Gemfile.lock' do
+        filepath = './project'
+        result = Lapidario::Helper.format_path(filepath, true)
+        expect(result).to eq('./project/Gemfile.lock')
+      end
+    end
+  end
+  
 end
