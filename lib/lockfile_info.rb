@@ -4,10 +4,13 @@ require_relative "helper"
 
 module Lapidario
   class LockfileInfo
+    attr_accessor :primary_gems
+    
     def initialize(gemfile_lock_as_strings)
       @git_gems = []
       @rubygems_gems = Lapidario::LockfileInfo.get_rubygems_from_gemfile_lock(gemfile_lock_as_strings)
-      print @rubygems_gems
+      # joins gem names and versions from git/rubygems/other sources in a single format
+      @primary_gems = [] + @rubygems_gems
     end
 
     def puts_versionless_rubygems_info
