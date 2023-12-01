@@ -4,6 +4,12 @@ TODO: Delete this and the text below, and describe your gem
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/lapidario`. To experiment with that code, run `bin/console` for an interactive prompt.
 
+## TO DO:
+- [ ] Backup system: keep `Gemfile.original` stashed persistently
+- [ ] Add option to ignore Gemfile lines with `# LOCK` commented on their right
+- [ ] Normalize git gems with rubygems from Gemfile.lock
+- [ ] Normalize gems from other sources with rubygems from Gemfile.lock
+
 ## Installation
 
 TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
