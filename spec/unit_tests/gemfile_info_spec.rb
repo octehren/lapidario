@@ -14,13 +14,21 @@ RSpec.describe Lapidario::GemfileInfo do
   describe "class and instance method functionality" do
     describe "#initialize" do
       it "creates GemfileInfo object with correct gemfile lines" do
-        expect(gemfile_info.instance_variable_get(:@gemfile_lines)).to be_an(Array)
+        expect(gemfile_info.instance_variable_get(:@gemfile_lines_info)).to be_an(Array)
       end
     end
 
     describe ".gem_info" do
       it "returns a hash with gem information" do
         gemfile_line = "gem 'rails', '~> 6.0'"
+        gem_info = described_class.gem_info(gemfile_line)
+        expect(gem_info[:name]).to eq('rails')
+        expect(gem_info[:current_version]).to eq('6.0')
+        expect(gem_info[:version_sign]).to eq('~>')
+      end
+
+      it "returns a hash with gem information when gem name is in double quotes" do
+        gemfile_line = 'gem "rails", "~> 6.0"'
         gem_info = described_class.gem_info(gemfile_line)
         expect(gem_info[:name]).to eq('rails')
         expect(gem_info[:current_version]).to eq('6.0')
