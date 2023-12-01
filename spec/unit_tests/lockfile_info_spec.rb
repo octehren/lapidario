@@ -2,7 +2,7 @@
 
 require_relative "../spec_helper"
 
-SIMPLE_LOCKFILE_PATH = "lapidario_v01"
+SIMPLE_LOCKFILE_PATH = "simplified"
 
 RSpec.describe Lapidario::LockfileInfo do
   describe "using simple lockfile" do
