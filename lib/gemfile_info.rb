@@ -4,16 +4,19 @@ require_relative "helper"
 
 module Lapidario
   class GemfileInfo
+    attr_accessor :gemfile_lines_info
+    attr_reader :original_gemfile
+
     def initialize(gemfile_as_strings)
       @original_gemfile = gemfile_as_strings
       # array of hashes:
       # { line_number: int; name: string; prepended_spaces: int;
       # current_version: string; version_sign: string; extra_info: string}
-      @gemfile_lines = Lapidario::GemfileInfo.extract_gemfile_lines_info(gemfile_as_strings)
+      @gemfile_lines_info = Lapidario::GemfileInfo.extract_gemfile_lines_info(gemfile_as_strings)
     end
 
     def self.get_gem_name(gem_name_item)
-      gem_name_item.sub("gem ", "").gsub("'", "")
+      gem_name_item.sub("gem ", "").gsub("'", "").gsub('"', "")
     end
 
     # detects version field, removes it from array and returns it
