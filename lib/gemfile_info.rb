@@ -5,8 +5,9 @@ require_relative "helper"
 module Lapidario
   class GemfileInfo
     def initialize(gemfile_as_strings)
+      @original_gemfile = gemfile_as_strings
       # array of hashes:
-      # { line_number: int; is_gem_line: bool;
+      # { line_number: int; name: string;
       # current_version: string; version_sign: string; extra_info: string}
       @gemfile_lines = Lapidario::GemfileInfo.extract_gemfile_lines_info(gemfile_as_strings)
     end
