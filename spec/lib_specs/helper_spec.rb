@@ -34,8 +34,12 @@ RSpec.describe Lapidario::Helper do
       expect(Lapidario::Helper.gem_line?('gem "example", "~> 1.2"')).to be(true)
     end
 
+    it "returns true for lines starting with 'gem ' prepended by one or more whitespaces" do
+      expect(Lapidario::Helper.gem_line?('  gem "example", "~> 1.2"')).to be(true)
+    end
+
     it "returns false for lines not starting with 'gem '" do
-      expect(Lapidario::Helper.gem_line?('  gem "example", "~> 1.2"')).to be(false)
+      expect(Lapidario::Helper.gem_line?('diamond "example", "~> 1.2"')).to be(false)
       expect(Lapidario::Helper.gem_line?('other_line')).to be(false)
     end
   end

@@ -14,7 +14,7 @@ module Lapidario
     end
 
     def self.gem_line?(gemfile_line)
-      gemfile_line.start_with? "gem "
+      gemfile_line.match?(/^\s*gem\s+["']([^"']+)["']/)
     end
 
     def self.format_path(filepath, for_lockfile = false)
