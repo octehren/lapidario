@@ -57,14 +57,17 @@ RSpec.describe Lapidario::GemfileInfo do
     describe ".build_gemfile_line" do
       describe "builds gemfile line" do
         it "based on gem_info data" do
-          gemfile_line = "gem 'rails',require: false,github: 'https://github.com/rails/rails', '>= 6.0',"
+          gemfile_line = "gem 'rails', require: false, github: 'https://github.com/rails/rails', '>= 6.0'"
           gem_info = described_class.gem_info(gemfile_line)
           built_line = described_class.build_gemfile_line(gem_info)
           expect(built_line).to eq("gem 'rails', '>= 6.0', require: false, github: 'https://github.com/rails/rails'")
         end
 
         it "making sure upper range is first element after gem name and lower range version, if an upper range exists" do
-          TODO
+          gemfile_line = "gem 'rails', require: false, github: 'https://github.com/rails/rails', '>= 6.0', '< 7.0'"
+          gem_info = described_class.gem_info(gemfile_line)
+          built_line = described_class.build_gemfile_line(gem_info)
+          expect(built_line).to eq("gem 'rails', '>= 6.0', '< 7.0', require: false, github: 'https://github.com/rails/rails'")
         end
       end
     end
