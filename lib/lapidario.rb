@@ -7,14 +7,9 @@ require_relative "gemfile_info"
 module Lapidario
   class Error < StandardError; end
 
-  def self.get_gemfile_lock_info(gemfile_lock_path)
-    # gemfile_lock = Helper.get_file_as_array_of_lines(gemfile_lock_path)
-    # GemfileLockInfo.new(gemfile_lock)
-  end
-
   def self.get_gemfile_and_lockfile_info(project_path_hash)
     project_path = project_path_hash[:project_path]
-    if (project_path)
+    if (project_path && !project_path.empty?)
       gemfile_path, lockfile_path = Lapidario::Helper.format_path(project_path, false), Lapidario::Helper.format_path(project_path, true)
     else
       gemfile_path, lockfile_path = Lapidario::Helper.format_path(project_path_hash[:gemfile_path], false), Lapidario::Helper.format_path(project_path_hash[:lockfile_path], true)
@@ -45,8 +40,3 @@ module Lapidario
     new_gemfile
   end
 end
-
-project_path_hash = {}
-project_path_hash[:gemfile_path] = "/Users/Otavio_Ehrenberger/Documents/DevelopingLibraries/Ruby/lapidario/spec/fixtures/gemfile_samples/Gemfile.lapidario_v01"
-project_path_hash[:lockfile_path] = "/Users/Otavio_Ehrenberger/Documents/DevelopingLibraries/Ruby/lapidario/spec/fixtures/lockfile_samples/Gemfile.lock.lapidario_v01"
-Lapidario.hardcode_lockfile_versions_into_gemfile_info(project_path_hash)
