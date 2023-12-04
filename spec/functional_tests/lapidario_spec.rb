@@ -5,10 +5,7 @@ require_relative '../spec_helper'
 RSpec.describe Lapidario do
   describe '.get_gemfile_and_lockfile_info' do
     context 'when project_path is provided in project_path_hash' do
-      let(:project_path_hash) { { 
-        project_path: '', 
-        gemfile_path: get_random_gemfile_path,
-        lockfile_path: get_random_lockfile_path  } }
+      let(:project_path_hash) { { project_path: File.join(__dir__, "../fixtures/project_path_sample")  } }
 
       it 'returns GemfileInfo and LockfileInfo' do
         gemfile_info, lockfile_info = Lapidario.get_gemfile_and_lockfile_info(project_path_hash)
@@ -20,8 +17,8 @@ RSpec.describe Lapidario do
     context 'when gemfile_path and lockfile_path are provided in project_path_hash' do
       let(:project_path_hash) do
         {
-          gemfile_path: '/path/to/Gemfile',
-          lockfile_path: '/path/to/Gemfile.lock'
+          gemfile_path: get_random_gemfile_path,
+          lockfile_path: get_random_lockfile_path 
         }
       end
 
