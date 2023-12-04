@@ -41,4 +41,13 @@ module Lapidario
     end
     new_gemfile
   end
+
+  def self.save_gemfiles(save_path, new_gemfile, original_gemfile)
+    # save original gemfile as backup
+    original_save_path = Lapidario::Helper.format_path(save_path) + ".original"
+    Lapidario::Helper.save_file(original_save_path, original_gemfile.join("\n"))
+    # overwrite current Gemfile with new content
+    new_save_path = Lapidario::Helper.format_path(save_path)
+    Lapidario::Helper.save_file(new_save_path, new_gemfile.join("\n"))
+  end
 end

@@ -29,6 +29,10 @@ module Lapidario
       filepath + appendage
     end
 
+    def self.save_file(save_path, content)
+      File.write(save_path, content)
+    end
+
     def self.get_file_as_array_of_lines(filepath)
       begin
         File.read(filepath).split("\n")
