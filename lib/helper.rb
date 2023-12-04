@@ -33,7 +33,7 @@ module Lapidario
       begin
         File.read(filepath).split("\n")
       rescue => e
-        raise "#{e.message}\n\nDouble-check the path provided for the Gemfile or Gemfile.lock\nProvided path:\n#{filepath}"
+        raise Lapidario::Error, "#{e.message}\n\nDouble-check the path provided for the Gemfile or Gemfile.lock\nProvided path:\n#{filepath}"
       end
     end
 
@@ -43,6 +43,7 @@ module Lapidario
       (initial_index...lines_array.size).each do |i|
         final_index = i if lines_array[i].empty?
       end
+      raise Lapidario::Error, "Gemfile.lock should have an empty line as the last line in the file." if final_index < 0
       lines_array.slice(initial_index, final_index)
     end
 

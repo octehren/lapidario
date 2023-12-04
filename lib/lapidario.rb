@@ -11,6 +11,8 @@ module Lapidario
     project_path = project_path_hash[:project_path]
     if (project_path && !project_path.empty?)
       gemfile_path, lockfile_path = Lapidario::Helper.format_path(project_path, false), Lapidario::Helper.format_path(project_path, true)
+    elsif !(project_path_hash[:gemfile_path] && !project_path_hash[:gemfile_path].empty?) && !(project_path_hash[:lockfile_path] && !project_path_hash[:lockfile_path].empty?)
+      raise Lapidario::Error, "Double-check input for project path."
     else
       gemfile_path, lockfile_path = Lapidario::Helper.format_path(project_path_hash[:gemfile_path], false), Lapidario::Helper.format_path(project_path_hash[:lockfile_path], true)
     end

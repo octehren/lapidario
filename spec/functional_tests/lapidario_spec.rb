@@ -48,8 +48,10 @@ RSpec.describe Lapidario do
 
     let(:lockfile_info) do
       Lapidario::LockfileInfo.new([
+        'GEM',
         'rails (6.0.0)',
-        'rspec (3.10.0)'
+        'rspec (3.10.0)',
+        ''
       ])
     end
 
@@ -77,8 +79,8 @@ RSpec.describe Lapidario do
 
     it 'builds a new Gemfile with updated versions' do
       new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines)
-      expect(new_gemfile[0]).to eq('gem "rails", "6.0.0"')
-      expect(new_gemfile[1]).to eq('gem "rspec", "3.10.0"')
+      expect(new_gemfile[0]).to eq("gem 'rails', '6.0.0'")
+      expect(new_gemfile[1]).to eq("gem 'rspec', '3.10.0'")
     end
   end
 end
