@@ -105,16 +105,20 @@ RSpec.describe Lapidario do
     context 'using simple gemfile & gemfile.lock' do
       let(:input_gemfile_path) { get_gemfile_path(SIMPLIFIED_GEM_AND_LOCKFILE_NAMES) }
       let(:input_lockfile_path) { get_lockfile_path(SIMPLIFIED_GEM_AND_LOCKFILE_NAMES) }
-      let(:input_project_params_hash) { get_final_gemfile_stringified(SIMPLIFIED_FINAL_GEMFILE_FOR_COMPARISON) }
-      
-      project_path_hash = { gemfile_path: input_gemfile_path, lockfile_path: input_lockfile_path }
-      info_instances = Lapidario.get_gemfile_and_lockfile_info(project_path_hash)
-      gemfile_info = info_instances[0]
-      lockfile_info = info_instances[1]
+      let(:output_gemfile_path) { get_final_gemfile_stringified(SIMPLIFIED_FINAL_GEMFILE_FOR_COMPARISON) }
 
       describe 'correctly produces a new gemfile' do
         it 'with same versions of lockfile' do
+          project_path_hash = { gemfile_path: input_gemfile_path, lockfile_path: input_lockfile_path }
+          info_instances = Lapidario.get_gemfile_and_lockfile_info(project_path_hash)
+          gemfile_info = info_instances[0]
+          lockfile_info = info_instances[1]
+          original_gemfile_lines = gemfile_info.original_gemfile
+
+          new_gemfile_info = Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info)
+          new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines)
           
+          expect(new_gemfile).to eq(Lapidario::Helper.get_file_as_array_of_lines(output_gemfile_path))
         end
       end
     end
