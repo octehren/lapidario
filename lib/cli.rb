@@ -14,9 +14,9 @@ module Lapidario
         puts "gem 'rails', '~> 7.0' # Not locked, will be taken into account to rebuild Gemfile"
         puts "Options:"
         puts "  --help, -h           Show help message"
-        puts "  --lock, -l           Rebuilds Gemfile using versions specified in Gemfile.lock; default sign is '~>' and default depth is 2 (up to minor, ignores patch)"
-        puts "  --reset, -r          Rebuilds Gemfile without gem versions"
-        puts "  --full-reset, -fr    Rebuilds Gemfile removing all info but gem names"
+        puts "  --lock, -l           Rebuild Gemfile using versions specified in Gemfile.lock; default sign is '~>' and default depth is 2 (up to minor, ignores patch)"
+        puts "  --reset, -r          Rebuild Gemfile without gem versions"
+        puts "  --full-reset, -fr    Rebuild Gemfile, removing all info but gem names"
         exit
       end
       puts "cmd args: #{_cmd_args}"
