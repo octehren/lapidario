@@ -2,6 +2,10 @@
 
 require_relative '../spec_helper'
 
+SIMPLIFIED_GEM_AND_LOCKFILE_NAMES = "lapidario_v01"
+
+SIMPLIFIED_FINAL_GEMFILE_FOR_COMPARISON = "lapidario_v01.hardcoded_from_lockfile"
+
 RSpec.describe Lapidario do
   describe '.get_gemfile_and_lockfile_info' do
     context 'when project_path is provided in project_path_hash' do
@@ -81,6 +85,38 @@ RSpec.describe Lapidario do
       new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines)
       expect(new_gemfile[0]).to eq("gem 'rails', '6.0.0'")
       expect(new_gemfile[1]).to eq("gem 'rspec', '3.10.0'")
+    end
+  end
+
+  describe '.save_gemfiles' do
+    let(:save_path) { Dir.pwd }
+    let(:original_gemfile) { ['gem "rails", "5.2.0"', 'gem "rspec", "3.9.0"'] }
+    let(:new_gemfile) { ['gem "rails", "6.0.0"', 'gem "rspec", "3.10.0"'] }
+
+    it 'saves original gemfile as backup and overwrites current Gemfile with new content' do
+      Lapidario.save_gemfiles(save_path, new_gemfile, original_gemfile)
+
+      expect(Lapidario::Helper).to have_received(:save_file).with(save_path + '/Gemfile.original', "gem \"rails\", \"5.2.0\"\ngem \"rspec\", \"3.9.0\"")
+      expect(Lapidario::Helper).to have_received(:save_file).with(save_path + '/Gemfile', "gem \"rails\", \"6.0.0\"\ngem \"rspec\", \"3.10.0\"")
+    end
+  end
+
+  describe 'everything comes together' do
+    context 'using simple gemfile & gemfile.lock' do
+      let(:input_gemfile_path) { get_gemfile_path(SIMPLIFIED_GEM_AND_LOCKFILE_NAMES) }
+      let(:input_lockfile_path) { get_lockfile_path(SIMPLIFIED_GEM_AND_LOCKFILE_NAMES) }
+      let(:input_project_params_hash) { get_final_gemfile_stringified(SIMPLIFIED_FINAL_GEMFILE_FOR_COMPARISON) }
+      
+      project_path_hash = { gemfile_path: input_gemfile_path, lockfile_path: input_lockfile_path }
+      info_instances = Lapidario.get_gemfile_and_lockfile_info(project_path_hash)
+      gemfile_info = info_instances[0]
+      lockfile_info = info_instances[1]
+
+      describe 'correctly produces a new gemfile' do
+        it 'with same versions of lockfile' do
+          
+        end
+      end
     end
   end
 end
