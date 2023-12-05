@@ -42,7 +42,7 @@ RSpec.describe Lapidario do
     end
   end
 
-  describe '.hardcode_lockfile_versions_into_gemfile_info' do
+  describe '.hardcode_lockfile_versioninto_gemfile_info' do
     let(:gemfile_info) do
       Lapidario::GemfileInfo.new([
         'gem "rails", "6.0.0"',
@@ -110,14 +110,14 @@ RSpec.describe Lapidario do
       describe 'correctly produces a new gemfile' do
         it 'with same versions of lockfile' do
           project_path_hash = { gemfile_path: input_gemfile_path, lockfile_path: input_lockfile_path }
-          s_info_instances = Lapidario.get_gemfile_and_lockfile_info(project_path_hash)
-          s_gemfile_info = s_info_instances[0]
-          s_lockfile_info = s_info_instances[1]
-          s_original_gemfile_lines = s_gemfile_info.original_gemfile
-          s_new_gemfile_info = Lapidario.hardcode_lockfile_versions_into_gemfile_info(s_gemfile_info, s_lockfile_info)
-          s_new_gemfile = Lapidario.build_new_gemfile(s_new_gemfile_info, s_original_gemfile_lines)
+          info_instances = Lapidario.get_gemfile_and_lockfile_info(project_path_hash)
+          gemfile_info = info_instances[0]
+          lockfile_info = info_instances[1]
+          original_gemfile_lines = gemfile_info.original_gemfile
+          new_gemfile_info = Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info)
+          new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines)
 
-          expect(s_new_gemfile.join("\n")).to eq(output_gemfile)
+          expect(new_gemfile.join("\n")).to eq(output_gemfile)
         end
       end
     end
