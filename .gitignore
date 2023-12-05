@@ -9,3 +9,7 @@
 
 # rspec failure tracking
 .rspec_status
+
+# Gemfile and Gemfile.original might be added multiple times, the ones in the repo will not be updated often, just exclude them
+Gemfile
+Gemfile.original
