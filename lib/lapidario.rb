@@ -33,7 +33,7 @@ module Lapidario
     new_gemfile = original_gemfile_lines.clone
     new_gemfile_info.each do |info_item|
       new_line = Lapidario::GemfileInfo.build_gemfile_line(info_item)
-      new_gemfile[info_item[:line_number]] = new_line
+      new_gemfile[info_item[:line_index]] = new_line
     end
     new_gemfile
   end

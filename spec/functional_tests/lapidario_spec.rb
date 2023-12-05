@@ -69,8 +69,8 @@ RSpec.describe Lapidario do
   describe '.build_new_gemfile' do
     let(:new_gemfile_info) do
       [
-        { name: 'rails', current_version: '6.0.0', line_number: 0 },
-        { name: 'rspec', current_version: '3.10.0', line_number: 1 }
+        { name: 'rails', current_version: '6.0.0', line_index: 0 },
+        { name: 'rspec', current_version: '3.10.0', line_index: 1 }
       ]
     end
 
@@ -105,20 +105,19 @@ RSpec.describe Lapidario do
     context 'using simple gemfile & gemfile.lock' do
       let(:input_gemfile_path) { get_gemfile_path(SIMPLIFIED_GEM_AND_LOCKFILE_NAMES) }
       let(:input_lockfile_path) { get_lockfile_path(SIMPLIFIED_GEM_AND_LOCKFILE_NAMES) }
-      let(:output_gemfile_path) { get_final_gemfile_stringified(SIMPLIFIED_FINAL_GEMFILE_FOR_COMPARISON) }
+      let(:output_gemfile) { get_final_gemfile_stringified(SIMPLIFIED_FINAL_GEMFILE_FOR_COMPARISON) }
 
       describe 'correctly produces a new gemfile' do
         it 'with same versions of lockfile' do
           project_path_hash = { gemfile_path: input_gemfile_path, lockfile_path: input_lockfile_path }
-          info_instances = Lapidario.get_gemfile_and_lockfile_info(project_path_hash)
-          gemfile_info = info_instances[0]
-          lockfile_info = info_instances[1]
-          original_gemfile_lines = gemfile_info.original_gemfile
+          s_info_instances = Lapidario.get_gemfile_and_lockfile_info(project_path_hash)
+          s_gemfile_info = s_info_instances[0]
+          s_lockfile_info = s_info_instances[1]
+          s_original_gemfile_lines = s_gemfile_info.original_gemfile
+          s_new_gemfile_info = Lapidario.hardcode_lockfile_versions_into_gemfile_info(s_gemfile_info, s_lockfile_info)
+          s_new_gemfile = Lapidario.build_new_gemfile(s_new_gemfile_info, s_original_gemfile_lines)
 
-          new_gemfile_info = Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info)
-          new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines)
-          
-          expect(new_gemfile).to eq(Lapidario::Helper.get_file_as_array_of_lines(output_gemfile_path))
+          expect(s_new_gemfile.join("\n")).to eq(output_gemfile)
         end
       end
     end
