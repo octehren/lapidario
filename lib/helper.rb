@@ -17,6 +17,12 @@ module Lapidario
       gemfile_line.match?(/^\s*gem\s+["']([^"']+)["']/)
     end
 
+    # formats based on depth; ex: version_fragment = '3.12.4' with depth 2 returns 3.12
+    def self.format_version_based_on_depth(version_fragment, depth = 2)
+      raise Lapidario::Error, "Tried to format #{version_fragment} with inadequate depth '#{depth}'." unless depth >= 1 && depth <= 3
+      version_fragment.split(".").slice(0, depth).join(".")
+    end
+
     def self.format_path(filepath, for_lockfile = false)
       # path can be ./project/, ./project or ./project/Gemfile, but never ./project/Gemfile/
       appendage = ""

@@ -54,13 +54,18 @@ module Lapidario
 
   # loops through lockfile info, collecting versions
   # hard-codes these versions on gemfile, as they might differ from the lockfile's
-  def self.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info)
+  # will use '~>' as default sign and 2 as default depth
+  def self.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info, default_sign = '~>', default_depth = 2)
     new_gemfile_info = gemfile_info.gemfile_lines_info.clone
     lockfile_primary_gems = lockfile_info.primary_gems
     # replace versions in gemfile with ones on lockfile
     new_gemfile_info.each do |gem_info|
       lock_version = lockfile_primary_gems[gem_info[:name]]
-      gem_info[:current_version] = lock_version if lock_version
+      if lock_version
+        gem_info[:current_version] = lock_version
+        gem_info[:current_version] = Lapidario::Helper.format_version_based_on_depth(lock_version, default_depth) if default_depth
+        gem_info[:version_sign] = default_sign if default_sign && !default_sign.empty?
+      end
     end
     new_gemfile_info
   end
