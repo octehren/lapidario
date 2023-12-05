@@ -6,8 +6,9 @@ Welcome to your new gem! In this directory, you'll find the files you need to be
 
 ## TO DO:
 - [ ] Backup system: keep `Gemfile.original` stashed persistently
-- [ ] Add option to ignore Gemfile lines with `# LOCK` commented on their right
-- [ ] Normalize git gems with rubygems from Gemfile.lock
+- [x] Add option to ignore Gemfile lines with `# LOCK` commented to the right end of the line
+- [x] Normalize git gems with rubygems from Gemfile.lock
+- [x] Add logic to ignore any comments in Gemfile gem lines
 - [ ] Normalize gems from other sources with rubygems from Gemfile.lock
 
 ## Installation
