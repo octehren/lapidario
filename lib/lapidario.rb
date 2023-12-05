@@ -69,4 +69,17 @@ module Lapidario
     end
     new_gemfile_info
   end
+
+  # soft reset of gemfile, removing all version information. Removing extra info is optional
+  # Note: if a version is ranged and extra info is keps, this will also hard-code the version upper range in the gem line.
+  def self.hardcode_gemfile_with_empty_versions(gemfile_info, keep_extra_info = true)
+    new_gemfile_info = gemfile_info.gemfile_lines_info.clone
+    # replace versions in gemfile with ones on lockfile
+    new_gemfile_info.each do |gem_info|
+      gem_info[:current_version] = ""
+      gem_info[:version_sign] = ""
+      gem_info[:extra_info] = "" unless keep_extra_info
+    end
+    new_gemfile_info
+  end
 end
