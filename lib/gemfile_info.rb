@@ -78,7 +78,7 @@ module Lapidario
     # gi = gem_info
     def self.build_gemfile_line(gi)
       line = "#{' ' * gi[:prepended_spaces].to_i}gem '#{gi[:name]}'"
-      if gi[:current_version]
+      if gi[:current_version] && !gi[:current_version].empty?
         version_fragment = "#{gi[:current_version]}"
         version_fragment = "#{gi[:version_sign]} " + version_fragment if gi[:version_sign]
         line = line + ", '#{version_fragment}'"
