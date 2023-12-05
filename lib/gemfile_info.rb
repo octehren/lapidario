@@ -48,8 +48,8 @@ module Lapidario
       gem_info[:prepended_spaces] = gemfile_line.match(/\A\s*/)[0].size
       # splits on coma, removes prepended whitespaces if any
       gemfile_line_items = gemfile_line.sub(/\A\s*/, '').split(",")
-      # first element will always be gem name, so return and remove it with shift
-      gem_info[:name] = Lapidario::GemfileInfo.get_gem_name gemfile_line_items.shift
+      # first element will always be gem name, so return and remove it with shift; remove all spaces in edge case that gem has trailing spaces
+      gem_info[:name] = Lapidario::GemfileInfo.get_gem_name(gemfile_line_items.shift).gsub(' ','')
       # second might not be the version number, so find the version, store it separetly and remove it from the rest of the line
       version_number_and_sign = Lapidario::GemfileInfo.pop_version_field!(gemfile_line_items)
       # to_s will make a nil value an empty string
