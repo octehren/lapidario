@@ -42,6 +42,13 @@ RSpec.describe Lapidario::Helper do
       expect(Lapidario::Helper.gem_line?('diamond "example", "~> 1.2"')).to be(false)
       expect(Lapidario::Helper.gem_line?('other_line')).to be(false)
     end
+
+    it "returns false for lines ending in # LOCK" do
+      expect(Lapidario::Helper.gem_line?('gem "example", "~> 1.2" # LOCK')).to be(false)
+      expect(Lapidario::Helper.gem_line?('gem "example", "~> 1.2" #LOCK')).to be(false)
+      expect(Lapidario::Helper.gem_line?('gem "example", "~> 1.2" #     LOCK')).to be(false)
+      expect(Lapidario::Helper.gem_line?('gem "example", "~> 1.2" # LOCKED? NOT!')).to be(true)
+    end
   end
 
   describe "#get_file_as_array_of_lines" do

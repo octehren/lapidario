@@ -8,12 +8,19 @@ module Lapidario
     @@GEM_VERSION_FRAGMENT = /^\s*([<>]=?|~>)?\s*[0-9a-zA-Z\s.]+\s*$/
     @@DETECT_GEMFILE_IN_PATH = /\/Gemfile/
     @@DETECT_LOCKFILE_IN_PATH = /\/Gemfile\.lock/
+    # checks 0 or more spaces to the left or 1 or more to the right, also asserting that LOCK is at the end of string
+    @@DETECT_LOCKED_LINE = /\s*LOCK\s*\z/
 
     def self.version_fragment?(line_section)
       line_section.match? @@GEM_VERSION_FRAGMENT
     end
 
     def self.gem_line?(gemfile_line)
+      commented_portion = gemfile_line.split("#", 2)[1] # gets everything to the right of a '#' if present in line
+      if commented_portion && commented_portion.match?(@@DETECT_LOCKED_LINE)
+        puts "Ignoring line as it ends in # LOCK: \n#{gemfile_line}"
+        return false
+      end
       gemfile_line.match?(/^\s*gem\s+["']([^"']+)["']/)
     end
 
