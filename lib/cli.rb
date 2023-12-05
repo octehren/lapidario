@@ -6,15 +6,15 @@ module Lapidario
   module CLI
     def self.start(_cmd_args)
       if _cmd_args.include?('--help') || _cmd_args.include?('-h')
-        puts "Usage: lapidario [options]"
-        puts "NOTE: if you want to exclude any gem in your Gemfile to the functionality described below, comment 'LOCK' at the end of its line."
-        puts "Valid example of locking gem line:"
+        puts "Usage: lapidario [options]\n\n"
+        puts "NOTE: if you want to exclude any gem in your Gemfile to the functionality described below, comment 'LOCK' at the end of its line.\nSee examples:\n\n"
+        puts "Valid example of locking gem line:\n"
         puts "gem 'rails', '~> 7.0' # LOCK"
-        puts "Invalid example of locking gem line:"
+        puts "\n\nInvalid example of locking gem line:"
         puts "gem 'rails', '~> 7.0' # Not locked, will be taken into account to rebuild Gemfile"
-        puts "Options:"
+        puts "\n\nOptions:"
         puts "  --help, -h           Show help message"
-        puts "  --lock, -l           Rebuild Gemfile using versions specified in Gemfile.lock; default sign is '~>' and default depth is 2 (up to minor, ignores patch)"
+        puts "  --lock, -l           Rebuild Gemfile using versions specified in Gemfile.lock; default sign is '~>' and default depth is 2 (up to minor version, ignores patch)"
         puts "  --reset, -r          Rebuild Gemfile without gem versions"
         puts "  --full-reset, -fr    Rebuild Gemfile, removing all info but gem names"
         exit
