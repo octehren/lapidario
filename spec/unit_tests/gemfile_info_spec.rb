@@ -27,6 +27,24 @@ RSpec.describe Lapidario::GemfileInfo do
         expect(gem_info[:version_sign]).to eq('~>')
       end
 
+      it "returns a hash with gem information while ignoring comment content" do
+        gemfile_line = "gem 'rails', '~> 6.0' # ignore meee lmao"
+        gem_info = described_class.gem_info(gemfile_line)
+        expect(gem_info[:name]).to eq('rails')
+        expect(gem_info[:current_version]).to eq('6.0')
+        expect(gem_info[:version_sign]).to eq('~>')
+        expect(gem_info[:extra_info]).to eq('')
+      end
+
+      it "returns a hash with gem information while ignoring comment content even if the comment content would be valid otherwise" do
+        gemfile_line = "gem 'rails'# #, '~> 6.0' # ignore meee lmao"
+        gem_info = described_class.gem_info(gemfile_line)
+        expect(gem_info[:name]).to eq('rails')
+        expect(gem_info[:current_version]).to eq('')
+        expect(gem_info[:version_sign]).to eq('')
+        expect(gem_info[:extra_info]).to eq('')
+      end
+
       it "returns a hash with gem information when gem name is in double quotes" do
         gemfile_line = 'gem "rails", "~> 6.0"'
         gem_info = described_class.gem_info(gemfile_line)

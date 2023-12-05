@@ -44,6 +44,8 @@ module Lapidario
 
     def self.gem_info(gemfile_line, line_index = -9999)
       gem_info = { line_index: line_index, name: "", prepended_spaces: 0, current_version: "", version_sign: "", extra_info: "" }
+      # ignore everything to the right of first '#' character
+      gemfile_line = gemfile_line.split("#", 2)[0]
       # count prepended spaces to reuse on gemfile rebuild
       gem_info[:prepended_spaces] = gemfile_line.match(/\A\s*/)[0].size
       # splits on coma, removes prepended whitespaces if any
