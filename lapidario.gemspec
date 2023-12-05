@@ -27,9 +27,9 @@ Gem::Specification.new do |spec|
       (File.expand_path(f) == __FILE__) || f.start_with?(*%w[test/ spec/ features/ .git .circleci appveyor])
     end
   end
-  spec.bindir = "exe"
+  # spec.bindir = "exe"
   spec.require_paths = ["lib", "bin"]
-  spec.executables = spec.files.grep(spec.name) { |f| File.basename(f) }
+  spec.executables = ["lapidario"]
 
 
   # Uncomment to register a new dependency of your gem

@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Lapidario
-  VERSION = "0.1.0alpha"
+  VERSION = "0.2alpha.0"
 end

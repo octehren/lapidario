@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lapidario (0.1.0)
+    lapidario (0.1.0alpha)
 
 GEM
   remote: https://rubygems.org/
