@@ -64,9 +64,9 @@ module Lapidario
       end
 
       new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines)
-      puts "New gemfile created:"
+      puts "New gemfile created:\n\n================================== GEMFILE START =================================="
       puts new_gemfile
-      puts "In case it does not look right, check for Gemfile.original in the same directory."
+      puts "================================== GEMFILE END ==================================\n\nIn case it does not look right, check for Gemfile.original in the same directory."
     end
 
     def self.output_help_and_exit
