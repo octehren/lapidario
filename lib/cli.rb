@@ -2,33 +2,62 @@
 require "optparse"
 require_relative "lapidario"
 
+# instance vars: 
+# @project_path_hash { project_path // gemfile_path // lockfile_path}
+# @version_depth
+# @version_sign
 module Lapidario
-  module CLI
-    def self.start(_cmd_args)
-      if _cmd_args.include?('--help') || _cmd_args.include?('-h')
-        puts "Usage: lapidario [options]\n\n"
-        puts "NOTE: if you want to exclude any gem in your Gemfile to the functionality described below, comment 'LOCK' at the end of its line.\nSee examples:\n\n"
-        puts "Valid example of locking gem line:\n"
-        puts "gem 'rails', '~> 7.0' # LOCK"
-        puts "\n\nInvalid example of locking gem line:"
-        puts "gem 'rails', '~> 7.0' # Not locked, will be taken into account to rebuild Gemfile"
-        puts "\n\nOptions:"
-        puts "  --help, -h           Show help message"
-        puts "  --lock, -l           Rebuild Gemfile using versions specified in Gemfile.lock; default sign is '~>' and default depth is 2 (up to minor version, ignores patch)"
-        puts "  --reset, -r          Rebuild Gemfile without gem versions"
-        puts "  --full-reset, -fr    Rebuild Gemfile, removing all info but gem names"
-        exit
+  class CLI
+    def initialize(_cmd_args)
+      parse_options(_cmd_args)
+      @project_path_hash ||= { project_path: './' }
+      @reset_gemfile ||= false
+      @full_reset_gemfile ||= false
+      @version_depth = 2
+      @version_sign = '~>'
+    end
+
+    def parse_options(options)
+      # Create an OptionParser object
+      opt_parser = OptionParser.new do |opts|
+        opts.on("-h", "--help") do
+          Lapidario::CLI.output_help_and_exit
+        end
+
+        opts.on("-p", "--path") do |project_path|
+          @project_path_hash = { project_path: project_path }
+        end
+
+        opts.on("-r", "--reset") do
+          @reset_gemfile = true
+        end
+
+        opts.on("-fr", "--full-reset") do
+          @full_reset_gemfile = true
+        end
+
+        opts.on("-d", "--depth") do |depth|
+          @version_depth = depth
+        end
+
+        opts.on("-vs", "--version-sign") do |sign|
+          @version_sign = sign
+        end
       end
-      puts "cmd args: #{_cmd_args}"
-      project_path_hash = { project_path: './' }
-      info_instances = Lapidario.get_gemfile_and_lockfile_info(project_path_hash)
+
+      # Parse the command-line arguments
+      opt_parser.parse!(options)
+    end
+
+    def start
+      info_instances = Lapidario.get_gemfile_and_lockfile_info(@project_path_hash)
       gemfile_info = info_instances[0]
       lockfile_info = info_instances[1]
       original_gemfile_lines = gemfile_info.original_gemfile
       new_gemfile_info = case
-      when _cmd_args.include?('--reset'), _cmd_args.include?('-r')
+      when @reset_gemfile
         Lapidario.hardcode_gemfile_with_empty_versions(gemfile_info, true) # keep_extra_info = true
-      when _cmd_args.include?('--full-reset'), _cmd_args.include?('-fr')
+      when @full_reset_gemfile
         Lapidario.hardcode_gemfile_with_empty_versions(gemfile_info, false) # keep_extra_info = false
       else # default = --lock
         Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info)
@@ -38,6 +67,26 @@ module Lapidario
       puts "New gemfile created:"
       puts new_gemfile
       puts "In case it does not look right, check for Gemfile.original in the same directory."
+    end
+
+    def self.output_help_and_exit
+      puts "Usage: lapidario [options]\n\n"
+      puts "NOTE: if you want to exclude any gem in your Gemfile to the functionality described below, comment 'LOCK' at the end of its line.\nSee examples:\n\n"
+      puts "Valid example of locking gem line:\n"
+      puts "gem 'rails', '~> 7.0' # LOCK"
+      puts "\n\nInvalid example of locking gem line:"
+      puts "gem 'rails', '~> 7.0' # Not locked, will be taken into account to rebuild Gemfile"
+      puts "\n\nOptions:"
+      puts "  --help, -h                  Show help message"
+      puts "  --lock, -l                  Rebuild Gemfile using versions specified in Gemfile.lock; default sign is '~>' and default depth is 2 (up to minor version, ignores patch)"
+      puts "  --reset, -r                 Rebuild Gemfile without gem versions"
+      puts "  --full-reset, -fr           Rebuild Gemfile, removing all info but gem names"
+      puts "  --depth, -d                 Select depth (major = 1, minor = 2, patch = 3) of version string; min = 1, max = 3, default = 2"
+      puts "  --version-sign, -vs         Select sign to use for version specification. Default is '~>'"
+      puts "  --path, -p                  Define path in which Gemfile and Lockfile are located. Defaults to current directory"
+      puts "  --write, -w                 Writes command output to Gemfile. Keeps previous Gemfile in Gemfile.original, remember to remove it"
+      puts "  --write-skip-backup, -wsb   Writes to Gemfile, does not create Gemfile.original"
+      exit
     end
   end
 end

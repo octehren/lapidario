@@ -3,4 +3,4 @@
 
 require_relative "../lib/cli"
 
-Lapidario::CLI.start(ARGV)
+Lapidario::CLI.new(ARGV).start
