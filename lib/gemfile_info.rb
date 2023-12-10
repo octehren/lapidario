@@ -81,7 +81,7 @@ module Lapidario
       if gi[:current_version] && !gi[:current_version].empty?
         version_fragment = "#{gi[:current_version]}"
         version_fragment = "#{gi[:version_sign]} " + version_fragment if gi[:version_sign]
-        line = line + ", '#{version_fragment}'"
+        line = line + ", '#{version_fragment.strip}'"
       end
       line = line + ", #{gi[:extra_info]}" if gi[:extra_info] && !gi[:extra_info].empty?
       line
