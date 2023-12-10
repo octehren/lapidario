@@ -42,12 +42,12 @@ module Lapidario
           @save_backup = false
         end
 
-        opts.on("-d", "--depth") do |depth|
-          @version_depth = depth
+        opts.on("-d", "--depth NUMBER") do |depth|
+          @version_depth = depth.to_i
         end
 
-        opts.on("-vs", "--version-sign") do |sign|
-          @version_sign = sign
+        opts.on("-vs", "--version-sign NUMBER") do |sign|
+          @version_sign = Lapidario::Helper.get_version_sign_from_number(sign.to_i)
         end
       end
 
@@ -66,7 +66,7 @@ module Lapidario
         when @full_reset_gemfile
           Lapidario.hardcode_gemfile_with_empty_versions(gemfile_info, false) # keep_extra_info = false
         else # default = --lock
-          Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info)
+          Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info, @version_sign, @version_depth)
         end
 
       new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines)
@@ -102,7 +102,7 @@ module Lapidario
       puts "  --reset, -r                 Rebuild Gemfile without gem versions"
       puts "  --full-reset, -fr           Rebuild Gemfile, removing all info but gem names"
       puts "  --depth, -d                 Select depth (major = 1, minor = 2, patch = 3) of version string; min = 1, max = 3, default = 2"
-      puts "  --version-sign, -vs         Select sign to use for version specification. Default is '~>'"
+      puts "  --version-sign, -vs         Select sign to use for version specification (default = '~>') (0 = '~>', 1 = '>=', 2 = '<=', 3 = '>', 4 = '<', 5 = no sign)"
       puts "  --path, -p                  Define path in which Gemfile and Lockfile are located. Defaults to current directory"
       puts "  --write, -w                 Writes command output to Gemfile. Keeps previous Gemfile in Gemfile.original, remember to remove it"
       puts "  --skip-backup, -sb          Skips creation of backup Gemfile.original if writing to gemfile"

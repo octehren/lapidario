@@ -10,6 +10,7 @@ module Lapidario
     @@DETECT_LOCKFILE_IN_PATH = /\/Gemfile\.lock/
     # checks 0 or more spaces to the left or 1 or more to the right, also asserting that LOCK is at the end of string
     @@DETECT_LOCKED_LINE = /\s*LOCK\s*\z/
+    @@VERSION_SIGNS = ['~>', '>=', '<=', '>', '<', '']
 
     def self.version_fragment?(line_section)
       line_section.match? @@GEM_VERSION_FRAGMENT
@@ -22,6 +23,11 @@ module Lapidario
         return false
       end
       gemfile_line.match?(/^\s*gem\s+["']([^"']+)["']/)
+    end
+
+    def self.get_version_sign_from_number(version_sign_num)
+      raise "Available version signs range from 0 to 5, run `$lapidario --help` for details" if version_sign_num > 5 || version_sign_num < 0
+      @@VERSION_SIGNS[version_sign_num]
     end
 
     # formats based on depth; ex: version_fragment = '3.12.4' with depth 2 returns 3.12
