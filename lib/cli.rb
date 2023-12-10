@@ -9,6 +9,7 @@ module Lapidario
       @project_path_hash ||= { project_path: './' }
       @reset_gemfile ||= false
       @full_reset_gemfile ||= false
+      @lock_gemfile ||= true unless @reset_gemfile || @full_reset_gemfile
       @version_depth ||= 2
       @version_sign ||= '~>'
       @save_new_gemfile ||= false
@@ -19,19 +20,14 @@ module Lapidario
       # Create an OptionParser object
       opt_parser = OptionParser.new do |opts|
         opts.on("-h", "--help", "Show help message") do
-          Lapidario::CLI.output_help_and_exit
-        end
-
-        opts.on("-p", "--path STRING", "Define path in which Gemfile and Lockfile are located. Defaults to current directory") do |project_path|
-          @project_path_hash = { project_path: project_path }
-        end
-
-        opts.on("-r", "--reset", "Rebuild Gemfile without gem versions") do
-          @reset_gemfile = true
-        end
-
-        opts.on("-fr", "--full-reset", "Rebuild Gemfile, removing all info but gem names") do
-          @full_reset_gemfile = true
+          puts "NOTE: if you want to exclude any gem in your Gemfile to the functionality described below, comment 'LOCK' at the end of its line.\nSee examples:\n\n"
+          puts "Valid example of locking gem line:\n"
+          puts "gem 'rails', '~> 7.0' # LOCK"
+          puts "\nInvalid example of locking gem line:"
+          puts "gem 'rails', '~> 7.0' # Not locked, will be taken into account to rebuild Gemfile\n\n"
+          puts opts
+          exit
+          #Lapidario::CLI.output_help_and_exit
         end
 
         opts.on("-w", "--write", "Writes command output to Gemfile. Backs up previous Gemfile in Gemfile.original, remember to remove it later") do
@@ -46,8 +42,24 @@ module Lapidario
           @version_depth = depth.to_i
         end
 
+        opts.on("-p", "--path STRING", "Define path in which Gemfile and Lockfile are located. Defaults to current directory") do |project_path|
+          @project_path_hash = { project_path: project_path }
+        end
+
         opts.on("-vs", "--version-sign NUMBER", "Select sign to use for version specification (default = '~>') (0 = '~>', 1 = '>=', 2 = '<=', 3 = '>', 4 = '<', 5 = no sign)") do |sign|
           @version_sign = Lapidario::Helper.get_version_sign_from_number(sign.to_i)
+        end
+
+        opts.on("-l", "--lock", "Rebuild Gemfile using versions specified in Gemfile.lock; default sign is '~>' and default depth is 2 (major & minor versions, ignores patch)") do
+          @lock_gemfile = true
+        end
+
+        opts.on("-r", "--reset", "Rebuild Gemfile without gem versions") do
+          @reset_gemfile = true
+        end
+
+        opts.on("-fr", "--full-reset", "Rebuild Gemfile, removing all info but gem names") do
+          @full_reset_gemfile = true
         end
       end
 
@@ -87,26 +99,6 @@ module Lapidario
         end
         puts "Saved new Gemfile to #{save_path}"
       end
-    end
-
-    def self.output_help_and_exit
-      puts "Usage: lapidario [options]\n\n"
-      puts "NOTE: if you want to exclude any gem in your Gemfile to the functionality described below, comment 'LOCK' at the end of its line.\nSee examples:\n\n"
-      puts "Valid example of locking gem line:\n"
-      puts "gem 'rails', '~> 7.0' # LOCK"
-      puts "\n\nInvalid example of locking gem line:"
-      puts "gem 'rails', '~> 7.0' # Not locked, will be taken into account to rebuild Gemfile"
-      puts "\n\nOptions:"
-      puts "  --help, -h                    Show help message"
-      puts "  --lock, -l                    Rebuild Gemfile using versions specified in Gemfile.lock; default sign is '~>' and default depth is 2 (up to minor version, ignores patch)"
-      puts "  --reset, -r                   Rebuild Gemfile without gem versions"
-      puts "  --full-reset, -fr             Rebuild Gemfile, removing all info but gem names"
-      puts "  --depth, -d NUMBER            Select depth (major = 1, minor = 2, patch = 3) of version string; min = 1, max = 3, default = 2"
-      puts "  --version-sign, -vs NUMBER    Select sign to use for version specification (default = '~>') (0 = '~>', 1 = '>=', 2 = '<=', 3 = '>', 4 = '<', 5 = no sign)"
-      puts "  --path, -p                    Define path in which Gemfile and Lockfile are located. Defaults to current directory"
-      puts "  --write, -w                   Writes command output to Gemfile. Keeps previous Gemfile in Gemfile.original, remember to remove it"
-      puts "  --skip-backup, -sb            Skips creation of backup Gemfile.original if writing to gemfile"
-      exit
     end
   end
 end
