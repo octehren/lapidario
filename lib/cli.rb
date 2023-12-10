@@ -12,7 +12,7 @@ module Lapidario
       @version_depth ||= 2
       @version_sign ||= '~>'
       @save_new_gemfile ||= false
-      @save_backup ||= false
+      @save_backup ||= true
     end
 
     def parse_options(options)
@@ -36,11 +36,9 @@ module Lapidario
 
         opts.on("-w", "--write") do
           @save_new_gemfile = true
-          @save_backup = true
         end
 
-        opts.on("-ws", "--write-skip-backup") do 
-          @save_new_gemfile = true
+        opts.on("-sb", "--skip-backup") do
           @save_backup = false
         end
 
@@ -71,7 +69,7 @@ module Lapidario
           Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info)
         end
 
-      new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines)
+      new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines).join("\n")
       puts "New gemfile created:\n\n================================== GEMFILE START =================================="
       puts new_gemfile
       puts "================================== GEMFILE END ==================================\n\nIn case it does not look right, check for Gemfile.original in the same directory."
@@ -79,11 +77,12 @@ module Lapidario
         begin
           save_path = Lapidario::Helper.format_path(@project_path_hash[:project_path], false)
           Lapidario::Helper.save_file(save_path, new_gemfile_info)
-          puts "Saved new file to #{save_path}"
           Lapidario::Helper.save_file(save_path + ".original", original_gemfile_lines) if @save_backup
         rescue => e
           puts "Failed to save file: #{e.message}"
+          raise e
         end
+        puts "Saved new Gemfile to #{save_path}"
       end
     end
 
@@ -103,7 +102,7 @@ module Lapidario
       puts "  --version-sign, -vs         Select sign to use for version specification. Default is '~>'"
       puts "  --path, -p                  Define path in which Gemfile and Lockfile are located. Defaults to current directory"
       puts "  --write, -w                 Writes command output to Gemfile. Keeps previous Gemfile in Gemfile.original, remember to remove it"
-      puts "  --write-skip-backup, -wsb   Writes to Gemfile, does not create Gemfile.original"
+      puts "  --skip-backup, -sb          Skips creation of backup Gemfile.original if writing to gemfile"
       exit
     end
   end
