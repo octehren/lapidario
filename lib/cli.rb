@@ -2,19 +2,17 @@
 require "optparse"
 require_relative "lapidario"
 
-# instance vars: 
-# @project_path_hash { project_path // gemfile_path // lockfile_path}
-# @version_depth
-# @version_sign
 module Lapidario
   class CLI
     def initialize(_cmd_args)
-      parse_options(_cmd_args)
+      parse_options(_cmd_args) # will initialize variables below if options are passed
       @project_path_hash ||= { project_path: './' }
       @reset_gemfile ||= false
       @full_reset_gemfile ||= false
-      @version_depth = 2
-      @version_sign = '~>'
+      @version_depth ||= 2
+      @version_sign ||= '~>'
+      @save_new_gemfile ||= false
+      @save_backup ||= false
     end
 
     def parse_options(options)
@@ -36,6 +34,16 @@ module Lapidario
           @full_reset_gemfile = true
         end
 
+        opts.on("-w", "--write") do
+          @save_new_gemfile = true
+          @save_backup = true
+        end
+
+        opts.on("-ws", "--write-skip-backup") do 
+          @save_new_gemfile = true
+          @save_backup = false
+        end
+
         opts.on("-d", "--depth") do |depth|
           @version_depth = depth
         end
@@ -55,18 +63,28 @@ module Lapidario
       lockfile_info = info_instances[1]
       original_gemfile_lines = gemfile_info.original_gemfile
       new_gemfile_info = case
-      when @reset_gemfile
-        Lapidario.hardcode_gemfile_with_empty_versions(gemfile_info, true) # keep_extra_info = true
-      when @full_reset_gemfile
-        Lapidario.hardcode_gemfile_with_empty_versions(gemfile_info, false) # keep_extra_info = false
-      else # default = --lock
-        Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info)
-      end
+        when @reset_gemfile
+          Lapidario.hardcode_gemfile_with_empty_versions(gemfile_info, true) # keep_extra_info = true
+        when @full_reset_gemfile
+          Lapidario.hardcode_gemfile_with_empty_versions(gemfile_info, false) # keep_extra_info = false
+        else # default = --lock
+          Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info)
+        end
 
       new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines)
       puts "New gemfile created:\n\n================================== GEMFILE START =================================="
       puts new_gemfile
       puts "================================== GEMFILE END ==================================\n\nIn case it does not look right, check for Gemfile.original in the same directory."
+      if @save_new_gemfile
+        begin
+          save_path = Lapidario::Helper.format_path(@project_path_hash[:project_path], false)
+          Lapidario::Helper.save_file(save_path, new_gemfile_info)
+          puts "Saved new file to #{save_path}"
+          Lapidario::Helper.save_file(save_path + ".original", original_gemfile_lines) if @save_backup
+        rescue => e
+          puts "Failed to save file: #{e.message}"
+        end
+      end
     end
 
     def self.output_help_and_exit
