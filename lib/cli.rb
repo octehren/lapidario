@@ -12,7 +12,7 @@ module Lapidario
       @version_depth ||= 2
       @version_sign ||= '~>'
       @save_new_gemfile ||= false
-      @save_backup ||= true
+      @save_backup ||= true if @save_backup.nil? # conditional assignment also executes on non-nil falsey values
     end
 
     def parse_options(options)
@@ -69,15 +69,18 @@ module Lapidario
           Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info)
         end
 
-      new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines).join("\n")
+      new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines)
       puts "New gemfile created:\n\n================================== GEMFILE START =================================="
       puts new_gemfile
       puts "================================== GEMFILE END ==================================\n\nIn case it does not look right, check for Gemfile.original in the same directory."
       if @save_new_gemfile
         begin
           save_path = Lapidario::Helper.format_path(@project_path_hash[:project_path], false)
-          Lapidario::Helper.save_file(save_path, new_gemfile)
-          Lapidario::Helper.save_file(save_path + ".original", original_gemfile_lines) if @save_backup
+          Lapidario::Helper.save_file(save_path, new_gemfile.join("\n"))
+          if @save_backup
+            Lapidario::Helper.save_file(save_path + ".original", original_gemfile_lines.join("\n")) 
+            puts "\n\nSaved backup to #{save_path}.original\n\n"
+          end
         rescue => e
           puts "Failed to save file: #{e.message}"
           raise e
