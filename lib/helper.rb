@@ -43,6 +43,7 @@ module Lapidario
     end
 
     def self.save_file(save_path, content)
+      content.join("\n") if content.is_a? Array
       File.write(save_path, content)
     end
 

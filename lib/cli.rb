@@ -76,7 +76,7 @@ module Lapidario
       if @save_new_gemfile
         begin
           save_path = Lapidario::Helper.format_path(@project_path_hash[:project_path], false)
-          Lapidario::Helper.save_file(save_path, new_gemfile_info)
+          Lapidario::Helper.save_file(save_path, new_gemfile)
           Lapidario::Helper.save_file(save_path + ".original", original_gemfile_lines) if @save_backup
         rescue => e
           puts "Failed to save file: #{e.message}"
