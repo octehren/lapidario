@@ -17,7 +17,6 @@ module Lapidario
     end
 
     def parse_options(options)
-      # Create an OptionParser object
       opt_parser = OptionParser.new do |opts|
         opts.on("-h", "--help", "Show help message") do
           puts "NOTE: if you want to exclude any gem in your Gemfile to the functionality described below, comment 'LOCK' at the end of its line.\nSee examples:\n\n"
@@ -27,14 +26,13 @@ module Lapidario
           puts "gem 'rails', '~> 7.0' # Not locked, will be taken into account to rebuild Gemfile\n\n"
           puts opts
           exit
-          #Lapidario::CLI.output_help_and_exit
         end
 
         opts.on("-w", "--write", "Writes command output to Gemfile. Backs up previous Gemfile in Gemfile.original, remember to remove it later") do
           @save_new_gemfile = true
         end
 
-        opts.on("-sb", "--skip-backup", "Skips creation of backup Gemfile.original if writing to Gemfile") do
+        opts.on("-s", "--skip-backup", "Skips creation of backup Gemfile.original if writing to Gemfile") do
           @save_backup = false
         end
 
@@ -46,7 +44,7 @@ module Lapidario
           @project_path_hash = { project_path: project_path }
         end
 
-        opts.on("-vs", "--version-sign NUMBER", "Select sign to use for version specification (default = '~>') (0 = '~>', 1 = '>=', 2 = '<=', 3 = '>', 4 = '<', 5 = no sign)") do |sign|
+        opts.on("-v", "--version-sign NUMBER", "Select sign to use for version specification (default = '~>') (0 = '~>', 1 = '>=', 2 = '<=', 3 = '>', 4 = '<', 5 = no sign)") do |sign|
           @version_sign = Lapidario::Helper.get_version_sign_from_number(sign.to_i)
         end
 
@@ -77,7 +75,7 @@ module Lapidario
           Lapidario.hardcode_gemfile_with_empty_versions(gemfile_info, true) # keep_extra_info = true
         when @full_reset_gemfile
           Lapidario.hardcode_gemfile_with_empty_versions(gemfile_info, false) # keep_extra_info = false
-        else # default = --lock
+        when @lock_gemfile # default = --lock
           Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info, @version_sign, @version_depth)
         end
 
