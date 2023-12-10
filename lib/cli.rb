@@ -56,7 +56,7 @@ module Lapidario
           @reset_gemfile = true
         end
 
-        opts.on("-fr", "--full-reset", "Rebuild Gemfile, removing all info but gem names") do
+        opts.on("-f", "--full-reset", "Rebuild Gemfile, removing all info but gem names") do
           @full_reset_gemfile = true
         end
       end
