@@ -64,7 +64,7 @@ module Lapidario
       if lock_version
         gem_info[:current_version] = lock_version
         gem_info[:current_version] = Lapidario::Helper.format_version_based_on_depth(lock_version, default_depth) if default_depth
-        gem_info[:version_sign] = default_sign if default_sign && !default_sign.empty?
+        gem_info[:version_sign] = default_sign
       end
     end
     new_gemfile_info
