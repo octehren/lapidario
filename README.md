@@ -1,8 +1,6 @@
 # Lapidario
-
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/lapidario`. To experiment with that code, run `bin/console` for an interactive prompt.
+Lapidario is a Gemfile and Gemfile.lock static analyzer made to help with edition and management of gem versions.
+The idea for it was conceived while upgrading gem versions for a lot of microservices at once.
 
 ## TO DO:
 - [ ] Backup system: keep `Gemfile.original` stashed persistently
