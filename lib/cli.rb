@@ -61,6 +61,11 @@ module Lapidario
         end
       end
 
+      if options.empty?
+        puts "Run `lapidario --help` if you would like to check the command line options or visit https://github.com/octehren/lapidario for a more in-depth explanation of the gem."
+        exit
+      end
+
       # Parse the command-line arguments
       opt_parser.parse!(options)
     end
