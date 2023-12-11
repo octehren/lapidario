@@ -28,7 +28,7 @@ module Lapidario
           exit
         end
 
-        opts.on("-w", "--write", "Writes command output to Gemfile. Backs up previous Gemfile in Gemfile.original, remember to remove it later") do
+        opts.on("-w", "--write", "Write command output to Gemfile. Backs up previous Gemfile to new file Gemfile.original") do
           @save_new_gemfile = true
         end
 
