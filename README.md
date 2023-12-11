@@ -33,9 +33,14 @@ He has a pretty robust Gemfile with most versions organized so this is very unli
 
 First he runs `bundle update` and notices that some gems indeed switched versions in the Lockfile. He runs `bundle exec rspec` and verifies that no tests are breaking, so the Gemfile is good to be updated.
 
-He will then run Lapidario to get versions from Gemfile.lock up to patch, have no version sign (meaning the version installed will be exact) and overwrite the current Gemfile:
+He will then run Lapidario to get versions from Gemfile.lock up to patch, have no version sign (meaning the version installed will be exact) and will just print the new Gemfile to the console:
 
-`lapidario -l -d 3 -v 5 -w`
+```lapidario -l -d 3 -v 5```
+
+After checking everything is OK, he'll run the same command with the addition of the `-w` (write) flag, which will also keep the original as backup:
+
+```lapidario -l -d 3 -v 5 -w```
+
 `-l` tells lapidario to get version information from the Gemfile, `-d` specifies the depth of the version precision, `-v 5` specifies that the version sign will be empty and `-w` specifies that the newly built Gemfile should overwrite the current Gemfile.
 
 So if he had a line in his Gemfile that looked like this:
@@ -71,31 +76,164 @@ gem 'pry'
 gem 'rspec', '3.2.0' # LOCK
 ```
 
-<run bundle update then lapidario lock cycle >
+He will then run `bundle update` and, deciding to give the gems some room, will write the lockfile versions up to the minor version and using the tilde-greater-than sign to keep versions as updated as possible within their major versions. Both of these the default options (`depth = 2`, `sign = ~>`), so he'll just use the `-l` option:
 
-
-
-
-#### Input Gemfile
-
-```ruby
-# Gemfile 1 content here
-source 'https://rubygems.org'
-
-gem 'gem_name_1', 'version_1'
-gem 'gem_name_2', 'version_2'
-# Add more gems as needed
+```
+lapidario -l
 ```
 
-#### Output Gemfile
+Now the output Gemfile will look something like this:
 
 ```ruby
-# Gemfile 2 content here
-source 'https://rubygems.org'
+gem 'pry', '~> 0.17'
+gem 'rspec', '3.2.0' # LOCK
+```
 
-gem 'gem_name_a', 'version_a'
-gem 'gem_name_b', 'version_b'
-# Add more gems as needed
+Looks great! He'll now save the Gemfile and skip the backup, to avoid saving a Gemfile.original :
+
+```
+lapidario -l -w -s
+```
+
+Such a tedious work avoided!
+
+
+## Options
+Lapidario is made to be extremely simple and easy to use. Here are all the available options:
+
+### # LOCK
+Not a command option, but add `# LOCK` to the right-side of the gem line you want ignored by Lapidario. Lines that do not specify gems, such as `ruby '3.2.2'`, `group :development do` and `end` are ignored by default.
+
+### -h, --help
+Shows the help message in the console.
+
+### -w, --write                      
+Writes output directly to Gemfile. Also backs up previous Gemfile to Gemfile.original, remember to remove it later.
+
+### -s, --skip-backup                
+
+Skips creation of backup Gemfile.original if writing to Gemfile. Does nothing if not used alongside the write option.
+
+### -d, --depth NUMBER               
+Selects depth (major = 1, minor = 2, patch = 3) of version string; min = 1, max = 3, default = 2;
+Example: `3` has depth 1, `3.2` has depth 2 and `3.2.1` has depth 3.
+
+### -v, --version-sign NUMBER        
+Selects sign to use for version specification; this will be mapped from a number (0 = '~>', 1 = '>=', 2 = '<=', 3 = '>', 4 = '<', 5 = no sign). Default is `~>`. Note that it will write the same sign to all lines, so remember to lock the lines you don't want the sign applied to.
+
+### -p, --path STRING                
+Define path in which `Gemfile` and `Gemfile.lock` are located. Defaults to current directory.
+
+### -l, --lock                       
+Rebuilds Gemfile using versions specified in Gemfile.lock; default sign for versions is '~>' and default depth is 2 (major & minor versions, ignores patch version).
+
+##### Input Gemfile
+
+```ruby
+# ...
+gem "rake"
+
+group :development, :test do
+  gem "pry", require: true
+
+  gem "rspec"
+
+  gem "rubocop"
+end
+```
+
+##### Output Gemfile
+
+```ruby
+# ...
+
+gem 'rake', '~> 13.1'
+
+group :development, :test do
+  gem 'pry', '~> 0.14', require: true
+
+  gem 'rspec', '~> 3.12'
+
+  gem 'rubocop', '~> 1.57'
+end
+```
+
+### -r, --reset                      
+Rebuilds Gemfile without gem versions, keeping other information present on the line.
+
+###### Input Gemfile
+```ruby
+# ...
+gem 'rake', '~> 13.1'
+
+group :development, :test do
+  gem 'pry', '~> 0.14', require: true
+
+  gem 'rspec', '~> 3.12'
+
+  gem 'rubocop', '~> 1.57'
+end
+```
+
+##### Output Gemfile
+
+```ruby
+# ...
+gem "rake"
+
+group :development, :test do
+  gem "pry", require: true
+
+  gem "rspec"
+
+  gem "rubocop"
+end
+```
+
+**NOTE**: if a gem line has a ranged version only the first version will be excluded. 
+
+For example:
+
+```ruby
+gem 'rails', '> 6', '<= 7.1'
+```
+
+Will become 
+
+```ruby
+gem 'rails', '<= 7.1'
+```
+
+### -f, --full-reset                 
+Rebuilds Gemfile, removing all info but gem names (also applies to ranged versions).
+
+###### Input Gemfile
+```ruby
+# ...
+gem 'rake', '>= 13.1', '<= 14'
+
+group :development, :test do
+  gem 'pry', '~> 0.14', require: true
+
+  gem 'rspec', '~> 3.12'
+
+  gem 'rubocop', '~> 1.57'
+end
+```
+
+##### Output Gemfile
+
+```ruby
+# ...
+gem "rake"
+
+group :development, :test do
+  gem "pry"
+
+  gem "rspec"
+
+  gem "rubocop"
+end
 ```
 
 ## TO DO:
