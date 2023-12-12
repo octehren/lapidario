@@ -1,0 +1,6 @@
+gem 'webpush', '~> 0.3', git: 'https:/2/github.com/ClearlyClaire/webpush.git'
+gem 'nsa', '~> 0.', git: 'https://github.com/jhawthorn/nsa.git'
+gem 'rails-settings-cached', '~> 0.6', git: 'https://github.com/mastodon/rails-settings-cached.git'
+gem 'omniauth-cas', '~> 2.0', git: 'https://github.com/stanhu/omniauth-cas.git'
+gem 'actioncable', '~> 7.1'
+gem 'actionmailbox', '~> 7.1'

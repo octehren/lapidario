@@ -3,8 +3,10 @@
 require_relative '../spec_helper'
 
 SIMPLIFIED_GEM_AND_LOCKFILE_NAMES = "lapidario_v01"
+SIMPLIFIED_GIT_GEM_AND_LOCKFILE_NAMES = "git_simplified"
 
 SIMPLIFIED_FINAL_GEMFILE_FOR_COMPARISON = "lapidario_v01.hardcoded_from_lockfile"
+SIMPLIFIED_FINAL_GIT_GEMFILE_FOR_COMPARISON = "git_simplified.hardcoded_from_lockfile"
 
 RSpec.describe Lapidario do
   describe '.get_gemfile_and_lockfile_info' do
@@ -93,6 +95,26 @@ RSpec.describe Lapidario do
       let(:input_gemfile_path) { get_gemfile_path(SIMPLIFIED_GEM_AND_LOCKFILE_NAMES) }
       let(:input_lockfile_path) { get_lockfile_path(SIMPLIFIED_GEM_AND_LOCKFILE_NAMES) }
       let(:output_gemfile) { get_final_gemfile_stringified(SIMPLIFIED_FINAL_GEMFILE_FOR_COMPARISON) }
+
+      describe 'correctly produces a new gemfile' do
+        it 'with same versions of lockfile' do
+          project_path_hash = { gemfile_path: input_gemfile_path, lockfile_path: input_lockfile_path }
+          info_instances = Lapidario.get_gemfile_and_lockfile_info(project_path_hash)
+          gemfile_info = info_instances[0]
+          lockfile_info = info_instances[1]
+          original_gemfile_lines = gemfile_info.original_gemfile
+          new_gemfile_info = Lapidario.hardcode_lockfile_versions_into_gemfile_info(gemfile_info, lockfile_info)
+          new_gemfile = Lapidario.build_new_gemfile(new_gemfile_info, original_gemfile_lines)
+
+          expect(new_gemfile.join("\n")).to eq(output_gemfile)
+        end
+      end
+    end
+
+    context 'using simple gemfile & gemfile.lock with git gems' do
+      let(:input_gemfile_path) { get_gemfile_path(SIMPLIFIED_GIT_GEM_AND_LOCKFILE_NAMES) }
+      let(:input_lockfile_path) { get_lockfile_path(SIMPLIFIED_GIT_GEM_AND_LOCKFILE_NAMES) }
+      let(:output_gemfile) { get_final_gemfile_stringified(SIMPLIFIED_FINAL_GIT_GEMFILE_FOR_COMPARISON) }
 
       describe 'correctly produces a new gemfile' do
         it 'with same versions of lockfile' do
