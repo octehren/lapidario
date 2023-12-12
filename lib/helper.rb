@@ -99,7 +99,7 @@ module Lapidario
           break
         end
       end
-      version_and_remote = "'#{version}', git: '#{remote}'"
+      version_and_remote = "#{version}, git: '#{remote}'"
       [name, version_and_remote]
     end
   end
