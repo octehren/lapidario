@@ -13,7 +13,7 @@ module Lapidario
 
   # first step: build gemfile and lockfile info instances
   # input: project_path_hash; has either :project_path key or both :gemfile_path and :lockfile_path; returns GemfileInfo and LockfileInfo instances
-  def self.get_gemfile_and_lockfile_info(project_path_hash)
+  def self.get_gemfile_and_lockfile_info(project_path_hash, include_git_gems = false)
     project_path = project_path_hash[:project_path]
     if (project_path && !project_path.empty?)
       gemfile_path, lockfile_path = Lapidario::Helper.format_path(project_path, false), Lapidario::Helper.format_path(project_path, true)
@@ -24,7 +24,7 @@ module Lapidario
     end
     
     gemfile_info = Lapidario::GemfileInfo.new(Lapidario::Helper.get_file_as_array_of_lines(gemfile_path))
-    lockfile_info = Lapidario::LockfileInfo.new(Lapidario::Helper.get_file_as_array_of_lines(lockfile_path))
+    lockfile_info = Lapidario::LockfileInfo.new(Lapidario::Helper.get_file_as_array_of_lines(lockfile_path), include_git_gems)
     [gemfile_info, lockfile_info]
   end
 
@@ -62,6 +62,12 @@ module Lapidario
     new_gemfile_info.each do |gem_info|
       lock_version = lockfile_primary_gems[gem_info[:name]]
       if lock_version
+        # if git version, add remote to extra info before extracting version
+        if lock_version.match?(/git:/)
+          remote = lock_version.split(",")[1].strip
+          lock_version = lock_version.split(",")[0]
+          gem_info[:extra_info] << remote
+        end
         gem_info[:current_version] = lock_version
         gem_info[:current_version] = Lapidario::Helper.format_version_based_on_depth(lock_version, default_depth) if default_depth
         gem_info[:version_sign] = default_sign
