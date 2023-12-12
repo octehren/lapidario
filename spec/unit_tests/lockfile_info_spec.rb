@@ -55,25 +55,24 @@ RSpec.describe Lapidario::LockfileInfo do
 
     describe '.get_git_gems_from_gemfile_lock' do
       it 'detects a GIT gem and stores its information' do
-        gemfile_lock_as_strings = %q(
-          GIT
-            remote: https://github.com/ClearlyClaire/webpush.git
-            revision: f14a4d52e201128b1b00245d11b6de80d6cfdcd9
-            ref: f14a4d52e201128b1b00245d11b6de80d6cfdcd9
-            specs:
-              webpush (0.3.8)
-                hkdf (~> 0.2)
-                jwt (~> 2.0)
-                
-          ).split("\n")
-        expect { described_class.get_git_gems_from_gemfile_lock(lockfile_as_array_of_strings) }.to output([{"webpush" => "0.3.8, git: 'https://github.com/ClearlyClaire/webpush.git'"}]).to_stdout
+        lockfile_as_array_of_strings = [
+          "GIT",
+          "  remote: https://github.com/ClearlyClaire/webpush.git",
+          "  revision: 86328ef0bd04ce21cc0504ff5e334591e8c2ccab",
+          "  branch: v0.6.6-aliases-true",
+          "  specs:",
+          "    webpush (0.3.8)",
+          "      rails (>= 4.2.0)",
+          ""
+        ]
+        expect(described_class.get_git_gems_from_gemfile_lock(lockfile_as_array_of_strings)).to eq({"webpush" => "'0.3.8', git: 'https://github.com/ClearlyClaire/webpush.git'"})
       end
     end
   end
 
   describe "using lockfile with both rubygems gems and git gems" do
     let(:lockfile_as_array_of_strings) { Lapidario::Helper.get_file_as_array_of_lines(get_lockfile_path(GIT_GEMS_LOCKFILE_PATH)) }
-    let(:lockfile_info) { described_class.new(lockfile_as_array_of_strings) }
+    let(:lockfile_info) { described_class.new(lockfile_as_array_of_strings, false) }
     describe '#git_gems?' do
       it 'returns true if there are git gems' do
         expect(lockfile_info.git_gems?).to eq(true)
@@ -85,7 +84,7 @@ RSpec.describe Lapidario::LockfileInfo do
 
         result = described_class.get_rubygems_from_gemfile_lock(lockfile_as_array_of_strings)
 
-        expect(result).to eq('ast' => '2.4.2', 'rubocop' => '1.57.2', 'rspec' => '3.12.0',)
+        expect(result).to eq({"actioncable"=>"7.1.2", "actionmailbox"=>"7.1.2"})
       end
     end
 
@@ -102,7 +101,11 @@ RSpec.describe Lapidario::LockfileInfo do
                 jwt (~> 2.0)
                 
           ).split("\n")
-        expect(described_class.get_git_gems_from_gemfile_lock(lockfile_as_array_of_strings)).to eq("webpush" => "'0.3.8', git: 'https://github.com/ClearlyClaire/webpush.git'")
+        result = described_class.get_git_gems_from_gemfile_lock(lockfile_as_array_of_strings)
+        expect(result).to eq({"webpush"=>"'0.3.8', git: 'https://github.com/ClearlyClaire/webpush.git'",
+        "nsa"=>"'0.2.8', git: 'https://github.com/jhawthorn/nsa.git'",
+        "rails-settings-cached"=>"'0.6.6', git: 'https://github.com/mastodon/rails-settings-cached.git'",
+        "omniauth-cas"=>"'2.0.0', git: 'https://github.com/stanhu/omniauth-cas.git'"})
       end
     end
   end
