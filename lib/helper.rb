@@ -78,5 +78,29 @@ module Lapidario
       # {4}: Indicates exactly 4 occurrences of the preceding character (whitespace in this case).
       line.match?(/\A\x20{4}[A-Za-z0-9]/)
     end
+
+    def self.extract_git_gem_info(git_gem_fragment)
+      remote = ""
+      # extract repo address
+      git_gem_fragment.each do |line|
+        if line.match?(/^\s*remote:\s/)
+          remote = line.split(":", 2)[1].strip 
+          break
+        end
+      end
+      name = ""
+      version = ""
+      # extract gem name and version
+      git_gem_fragment.each_with_index do |line, index|
+        if line.match?(/^\s*specs:$/) # gem name will come immediately after 'specs'
+          gem_name_line = git_gem_fragment[index + 1].gsub(/\s/, '')
+          name = gem_name_line.split("(")[0]
+          version = gem_name_line.split("(")[1].sub(")", '')
+          break
+        end
+      end
+      version_and_remote = "#{version}, git: '#{remote}'"
+      [name, version_and_remote]
+    end
   end
 end

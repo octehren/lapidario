@@ -1,0 +1,6 @@
+gem 'webpush'
+gem 'nsa'
+gem 'rails-settings-cached'
+gem 'omniauth-cas'
+gem 'actioncable'
+gem 'actionmailbox'

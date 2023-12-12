@@ -124,6 +124,25 @@ Selects sign to use for version specification; this will be mapped from a number
 ### -p, --path STRING                
 Define path in which `Gemfile` and `Gemfile.lock` are located. Defaults to current directory.
 
+### -g, --git-gems                   
+Include GIT gems from Gemfile.lock in Gemfile reconstruction. This is off by default and will only affect the `--lock` command.
+Note: This is not guaranteed to support branch or commit specification.
+Gem lines are normalized to have the version and the remote under the `git:` key, like in this example:
+
+#### Input (Gemfile.lock fragment)
+```
+GIT
+  remote: https://github.com/jhawthorn/nsa.git
+  revision: e020fcc3a54d993ab45b7194d89ab720296c111b
+  ref: e020fcc3a54d993ab45b7194d89ab720296c111b
+  specs:
+    nsa (0.2.8)
+```
+#### Output
+```ruby
+gem 'nsa', '0.2.8', git: 'https://github.com/jhawthorn/nsa.git'
+```
+
 ### -l, --lock                       
 Rebuilds Gemfile using versions specified in Gemfile.lock; default sign for versions is '~>' and default depth is 2 (major & minor versions, ignores patch version).
 
@@ -241,7 +260,7 @@ end
 - [x] Add option to ignore Gemfile lines with `# LOCK` commented to the right end of the line
 - [x] Normalize git gems with rubygems from Gemfile.lock
 - [x] Add logic to ignore any comments in Gemfile gem lines
-- [ ] Normalize gems from other sources (such as GIT) with rubygems from Gemfile.lock
+- [x] Normalize git gems with rubygems-sourced gems from Gemfile.lock
 
 ## Development
 

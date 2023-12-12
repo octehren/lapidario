@@ -139,5 +139,29 @@ RSpec.describe Lapidario::Helper do
       end
     end
   end
+
+  describe '.extract_git_gem_info' do
+    let(:git_gem_fragment) do
+      [
+        "GIT",
+        "  remote: https://github.com/mastodon/rails-settings-cached.git",
+        "  revision: 86328ef0bd04ce21cc0504ff5e334591e8c2ccab",
+        "  branch: v0.6.6-aliases-true",
+        "  specs:",
+        "    rails-settings-cached (0.6.6)",
+        "      rails (>= 4.2.0)"
+      ]
+    end
+
+    subject { Lapidario::Helper.extract_git_gem_info(git_gem_fragment) }
+
+    it 'extracts the gem name correctly' do
+      expect(subject.first).to eq('rails-settings-cached')
+    end
+
+    it 'extracts the gem version and remote URL correctly' do
+      expect(subject.last).to eq("'0.6.6', git: 'https://github.com/mastodon/rails-settings-cached.git'")
+    end
+  end
   
 end

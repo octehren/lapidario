@@ -14,6 +14,7 @@ module Lapidario
       @version_sign ||= '~>'
       @save_new_gemfile ||= false
       @save_backup ||= true if @save_backup.nil? # conditional assignment also executes on non-nil falsey values
+      @include_git_gems ||= false
     end
 
     def parse_options(options)
@@ -48,6 +49,10 @@ module Lapidario
           @project_path_hash = { project_path: project_path }
         end
 
+        opts.on("-g", "--git-gems", "Include GIT gems from Gemfile.lock in Gemfile reconstruction") do
+          @include_git_gems = true
+        end
+
         opts.on("-l", "--lock", "Rebuild Gemfile using versions specified in Gemfile.lock; default sign is '~>' and default depth is 2 (major & minor versions, ignores patch)") do
           @lock_gemfile = true
         end
@@ -71,7 +76,7 @@ module Lapidario
     end
 
     def start
-      info_instances = Lapidario.get_gemfile_and_lockfile_info(@project_path_hash)
+      info_instances = Lapidario.get_gemfile_and_lockfile_info(@project_path_hash, @include_git_gems)
       gemfile_info = info_instances[0]
       lockfile_info = info_instances[1]
       original_gemfile_lines = gemfile_info.original_gemfile
