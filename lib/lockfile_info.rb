@@ -6,8 +6,8 @@ module Lapidario
   class LockfileInfo
     attr_accessor :primary_gems, :git_gems, :rubygems_gems
     
-    def initialize(gemfile_lock_as_strings, skip_git = true)
-      @git_gems = Lapidario::LockfileInfo.get_git_gems_from_gemfile_lock(gemfile_lock_as_strings) unless skip_git
+    def initialize(gemfile_lock_as_strings, include_git = true)
+      @git_gems = Lapidario::LockfileInfo.get_git_gems_from_gemfile_lock(gemfile_lock_as_strings) if include_git
       @git_gems ||= {}
       @rubygems_gems = Lapidario::LockfileInfo.get_rubygems_from_gemfile_lock(gemfile_lock_as_strings)
       # joins gem names and versions from git/rubygems/other sources in a single format
