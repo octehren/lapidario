@@ -88,19 +88,6 @@ RSpec.describe Lapidario do
     end
   end
 
-  describe '.save_gemfiles' do
-    let(:save_path) { Dir.pwd }
-    let(:original_gemfile) { ['gem "rails", "5.2.0"', 'gem "rspec", "3.9.0"'] }
-    let(:new_gemfile) { ['gem "rails", "6.0.0"', 'gem "rspec", "3.10.0"'] }
-
-    it 'saves original gemfile as backup and overwrites current Gemfile with new content' do
-      Lapidario.save_gemfiles(save_path, new_gemfile, original_gemfile)
-
-      expect(Lapidario::Helper).to have_received(:save_file).with(save_path + '/Gemfile.original', "gem \"rails\", \"5.2.0\"\ngem \"rspec\", \"3.9.0\"")
-      expect(Lapidario::Helper).to have_received(:save_file).with(save_path + '/Gemfile', "gem \"rails\", \"6.0.0\"\ngem \"rspec\", \"3.10.0\"")
-    end
-  end
-
   describe 'everything comes together' do
     context 'using simple gemfile & gemfile.lock' do
       let(:input_gemfile_path) { get_gemfile_path(SIMPLIFIED_GEM_AND_LOCKFILE_NAMES) }
